@@ -7,8 +7,8 @@
     <!-- 定义日志文件的存储路径 -->
     <property name="LOG_PATH" value="./logs"/>
 
-    <!-- 1. 定义统一的日志格式为变量 -->
-    <property name="DEF_LOG_FORMAT" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+    <!-- 1. 定义统一的日志格式为变量, 增加了 traceId -->
+    <property name="DEF_LOG_FORMAT" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-}] [%thread] %-5level %logger{36} - %msg%n"/>
 
     <!-- ================================================================== -->
     <!--                            Appenders                               -->
