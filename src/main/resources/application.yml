@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: demo
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+server:
+  port: ${PORT:8080}
+mybatis:
+  mapper-locations: classpath:mapper/*.xml

@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.converter.ProductConverter;
 import com.example.demo.model.dto.ProductDto;
-import com.example.demo.model.Result;
+import com.example.demo.model.vo.Result;
 import com.example.demo.service.api.ProductService;
 import com.example.demo.model.vo.ProductVo;
 import org.springframework.web.bind.annotation.*;
