@@ -19,6 +19,8 @@ public class GlobalExceptionHandler {
 
     /**
      * Handles specific business logic exceptions.
+     * The HTTP status is 200 for most business errors, except for 403, 404, 500.
+     * The 'code' in the response body contains the specific business error code.
      *
      * @param ex The BusinessException that was thrown.
      * @return A ResponseEntity containing the standardized error response.
@@ -26,8 +28,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Result<Object>> handleBusinessException(BusinessException ex) {
         ErrorCode errorCode = ex.getErrorCode();
+        // The 'code' in the body is always the specific error code from the enum
         Result<Object> result = Result.error(errorCode.getHttpStatus(), errorCode.getMessage(), ex.getData());
-        return new ResponseEntity<>(result, HttpStatus.valueOf(errorCode.getHttpStatus()));
+
+        // Determine the HTTP status code based on the new rule
+        HttpStatus httpStatus;
+        int errorCodeHttpStatus = errorCode.getHttpStatus();
+
+        if (errorCodeHttpStatus == 403 || errorCodeHttpStatus == 404 || errorCodeHttpStatus == 500) {
+            httpStatus = HttpStatus.valueOf(errorCodeHttpStatus);
+        } else {
+            httpStatus = HttpStatus.OK;
+        }
+
+        return new ResponseEntity<>(result, httpStatus);
     }
 
     /**
@@ -43,6 +57,7 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+        // This will be caught and handled by handleBusinessException
         throw new BusinessException(ErrorCode.VALIDATION_ERROR, errors);
     }
 
@@ -57,6 +72,6 @@ public class GlobalExceptionHandler {
         // In a real application, you would log the exception ex here
         ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         Result<Object> result = Result.error(errorCode.getHttpStatus(), errorCode.getMessage());
-        return new ResponseEntity<>(result, HttpStatus.valueOf(errorCode.getHttpStatus()));
+        return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

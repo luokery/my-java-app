@@ -6,8 +6,10 @@ import com.example.demo.model.dto.ProductDto;
 import com.example.demo.model.vo.Result;
 import com.example.demo.service.api.ProductService;
 import com.example.demo.model.vo.ProductVo;
+import jakarta.validation.constraints.Positive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
+@Validated
 public class ProductController {
 
     private static final Logger log = LoggerFactory.getLogger(ProductController.class);
@@ -29,6 +32,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Result<ProductVo> save(@Validated(Groups.Create.class) @RequestBody ProductDto productDto) {
         log.info("Saving product: {}", productDto);
         ProductDto savedProductDto = productService.save(productDto);
@@ -44,7 +48,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Result<ProductVo> findById(@PathVariable Long id) {
+    public Result<ProductVo> findById(@PathVariable @Positive(message = "ID must be a positive number") Long id) {
         log.info("Finding product by id: {}", id);
         ProductDto productDto = productService.findById(id);
         return Result.success(productConverter.toVo(productDto));
@@ -61,9 +65,9 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public Result<Void> deleteById(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable @Positive(message = "ID must be a positive number") Long id) {
         log.info("Deleting product by id: {}", id);
         productService.deleteById(id);
-        return Result.success();
     }
 }
