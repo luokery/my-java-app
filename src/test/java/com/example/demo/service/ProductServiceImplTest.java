@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.converter.ProductConverter;
+import com.example.demo.exception.BusinessException;
+import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.ProductMapper;
 import com.example.demo.model.dto.ProductDto;
 import com.example.demo.model.entity.Product;
@@ -29,65 +31,111 @@ class ProductServiceImplTest {
     @Test
     void findById_whenProductExists_shouldReturnProductDto() {
         // Arrange
+        long productId = 1L;
         Product product = new Product();
-        product.setId(1L);
-        product.setName("Test Product");
-
+        product.setId(productId);
         ProductDto productDto = new ProductDto();
-        productDto.setId(1L);
-        productDto.setName("Test Product");
+        productDto.setId(productId);
 
-        when(productMapper.findById(1L)).thenReturn(product);
+        when(productMapper.findById(productId)).thenReturn(product);
         when(productConverter.toDto(product)).thenReturn(productDto);
 
         // Act
-        ProductDto foundProductDto = productService.findById(1L);
+        ProductDto foundProductDto = productService.findById(productId);
 
         // Assert
         assertNotNull(foundProductDto);
-        assertEquals(1L, foundProductDto.getId());
+        assertEquals(productId, foundProductDto.getId());
     }
 
     @Test
-    void findById_whenProductNotExists_shouldReturnNull() {
+    void findById_whenProductNotExists_shouldThrowBusinessException() {
         // Arrange
-        when(productMapper.findById(1L)).thenReturn(null);
+        long productId = 1L;
+        when(productMapper.findById(productId)).thenReturn(null);
 
-        // Act
-        ProductDto foundProductDto = productService.findById(1L);
+        // Act & Assert
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            productService.findById(productId);
+        });
 
-        // Assert
-        assertNull(foundProductDto);
+        assertEquals(ErrorCode.PRODUCT_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
-    void save_shouldSaveAndReturnProductDto() {
+    void save_whenCreatingNewProduct_shouldSaveAndReturnDto() {
         // Arrange
-        ProductDto productDtoToSave = new ProductDto();
-        productDtoToSave.setName("New Product");
+        ProductDto dtoToSave = new ProductDto();
+        dtoToSave.setName("New Product");
 
-        Product productToSave = new Product();
-        productToSave.setName("New Product");
+        Product entityToSave = new Product();
 
-        Product savedProduct = new Product();
-        savedProduct.setId(1L);
-        savedProduct.setName("New Product");
+        Product savedEntity = new Product();
+        savedEntity.setId(1L);
 
-        ProductDto savedProductDto = new ProductDto();
-        savedProductDto.setId(1L);
-        savedProductDto.setName("New Product");
+        ProductDto expectedDto = new ProductDto();
+        expectedDto.setId(1L);
 
-        when(productConverter.toEntity(productDtoToSave)).thenReturn(productToSave);
-        when(productMapper.save(any(Product.class))).thenReturn(1);
-        when(productConverter.toDto(any(Product.class))).thenReturn(savedProductDto);
+        when(productConverter.toEntity(dtoToSave)).thenReturn(entityToSave);
+        // Note: mybatis save method might not return a value, but the id is set on the object.
+        // We'll mock the converter to simulate this.
+        when(productConverter.toDto(entityToSave)).thenReturn(expectedDto);
 
         // Act
-        ProductDto result = productService.save(productDtoToSave);
+        ProductDto result = productService.save(dtoToSave);
 
         // Assert
         assertNotNull(result);
         assertEquals(1L, result.getId());
-        assertEquals("New Product", result.getName());
-        verify(productMapper, times(1)).save(productToSave);
+        verify(productMapper, times(1)).save(entityToSave);
+    }
+
+    @Test
+    void save_whenUpdatingNonExistentProduct_shouldThrowBusinessException() {
+        // Arrange
+        long productId = 1L;
+        ProductDto dtoToUpdate = new ProductDto();
+        dtoToUpdate.setId(productId);
+        dtoToUpdate.setName("Updated Name");
+
+        when(productMapper.findById(productId)).thenReturn(null);
+
+        // Act & Assert
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            productService.save(dtoToUpdate);
+        });
+
+        assertEquals(ErrorCode.PRODUCT_NOT_FOUND, exception.getErrorCode());
+        verify(productMapper, never()).save(any());
+    }
+
+    @Test
+    void deleteById_whenProductExists_shouldDeleteProduct() {
+        // Arrange
+        long productId = 1L;
+        Product existingProduct = new Product();
+        existingProduct.setId(productId);
+        when(productMapper.findById(productId)).thenReturn(existingProduct);
+
+        // Act
+        productService.deleteById(productId);
+
+        // Assert
+        verify(productMapper, times(1)).deleteById(productId);
+    }
+
+    @Test
+    void deleteById_whenProductNotExists_shouldThrowBusinessException() {
+        // Arrange
+        long productId = 1L;
+        when(productMapper.findById(productId)).thenReturn(null);
+
+        // Act & Assert
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            productService.deleteById(productId);
+        });
+
+        assertEquals(ErrorCode.PRODUCT_NOT_FOUND, exception.getErrorCode());
+        verify(productMapper, never()).deleteById(anyLong());
     }
 }

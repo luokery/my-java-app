@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.controller.dto.Groups;
 import com.example.demo.converter.ProductConverter;
 import com.example.demo.model.dto.ProductDto;
 import com.example.demo.model.vo.Result;
@@ -7,6 +8,7 @@ import com.example.demo.service.api.ProductService;
 import com.example.demo.model.vo.ProductVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,10 +29,18 @@ public class ProductController {
     }
 
     @PostMapping
-    public Result<ProductVo> save(@RequestBody ProductDto productDto) {
+    public Result<ProductVo> save(@Validated(Groups.Create.class) @RequestBody ProductDto productDto) {
         log.info("Saving product: {}", productDto);
         ProductDto savedProductDto = productService.save(productDto);
         return Result.success(productConverter.toVo(savedProductDto));
+    }
+
+    @PutMapping("/{id}")
+    public Result<ProductVo> update(@PathVariable Long id, @Validated(Groups.Update.class) @RequestBody ProductDto productDto) {
+        log.info("Updating product with id: {}, data: {}", id, productDto);
+        productDto.setId(id);
+        ProductDto updatedProductDto = productService.save(productDto);
+        return Result.success(productConverter.toVo(updatedProductDto));
     }
 
     @GetMapping("/{id}")

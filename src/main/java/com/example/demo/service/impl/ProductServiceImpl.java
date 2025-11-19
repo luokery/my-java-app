@@ -1,6 +1,8 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.converter.ProductConverter;
+import com.example.demo.exception.BusinessException;
+import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.ProductMapper;
 import com.example.demo.model.dto.ProductDto;
 import com.example.demo.model.entity.Product;
@@ -25,6 +27,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDto save(ProductDto productDto) {
+        if (productDto.getId() != null) { // This is an update operation
+            Product existingProduct = productMapper.findById(productDto.getId());
+            if (existingProduct == null) {
+                throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
+            }
+        }
         Product product = productConverter.toEntity(productDto);
         productMapper.save(product);
         return productConverter.toDto(product);
@@ -33,6 +41,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDto findById(Long id) {
         Product product = productMapper.findById(id);
+        if (product == null) {
+            throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
+        }
         return productConverter.toDto(product);
     }
 
@@ -46,6 +57,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void deleteById(Long id) {
+        Product product = productMapper.findById(id);
+        if (product == null) {
+            throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
+        }
         productMapper.deleteById(id);
     }
 }
