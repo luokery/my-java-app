@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.mapper.ProductMapper;
 import com.example.demo.model.Product;
-import com.example.demo.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -19,7 +18,7 @@ import static org.mockito.Mockito.*;
 class ProductServiceImplTest {
 
     @Mock
-    private ProductRepository productRepository;
+    private ProductMapper productMapper;
 
     @InjectMocks
     private ProductServiceImpl productService;
@@ -30,7 +29,7 @@ class ProductServiceImplTest {
         Product product = new Product();
         product.setId(1L);
         product.setName("Test Product");
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productMapper.findById(1L)).thenReturn(product);
 
         // Act
         Product foundProduct = productService.findById(1L);
@@ -43,7 +42,7 @@ class ProductServiceImplTest {
     @Test
     void findById_whenProductNotExists_shouldReturnNull() {
         // Arrange
-        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+        when(productMapper.findById(1L)).thenReturn(null);
 
         // Act
         Product foundProduct = productService.findById(1L);
@@ -61,7 +60,7 @@ class ProductServiceImplTest {
         productToSave.setStock(100);
         productToSave.setCreateTime(LocalDateTime.now());
 
-        when(productRepository.save(any(Product.class))).thenReturn(productToSave);
+        when(productMapper.save(any(Product.class))).thenReturn(1);
 
         // Act
         Product savedProduct = productService.save(productToSave);
@@ -69,6 +68,6 @@ class ProductServiceImplTest {
         // Assert
         assertNotNull(savedProduct);
         assertEquals("New Product", savedProduct.getName());
-        verify(productRepository, times(1)).save(productToSave);
+        verify(productMapper, times(1)).save(productToSave);
     }
 }
