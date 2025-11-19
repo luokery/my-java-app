@@ -1,15 +1,15 @@
 package com.example.demo.service;
 
+import com.example.demo.converter.ProductConverter;
 import com.example.demo.mapper.ProductMapper;
-import com.example.demo.model.Product;
+import com.example.demo.model.dto.ProductDto;
+import com.example.demo.model.entity.Product;
+import com.example.demo.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -20,23 +20,32 @@ class ProductServiceImplTest {
     @Mock
     private ProductMapper productMapper;
 
+    @Mock
+    private ProductConverter productConverter;
+
     @InjectMocks
     private ProductServiceImpl productService;
 
     @Test
-    void findById_whenProductExists_shouldReturnProduct() {
+    void findById_whenProductExists_shouldReturnProductDto() {
         // Arrange
         Product product = new Product();
         product.setId(1L);
         product.setName("Test Product");
+
+        ProductDto productDto = new ProductDto();
+        productDto.setId(1L);
+        productDto.setName("Test Product");
+
         when(productMapper.findById(1L)).thenReturn(product);
+        when(productConverter.toDto(product)).thenReturn(productDto);
 
         // Act
-        Product foundProduct = productService.findById(1L);
+        ProductDto foundProductDto = productService.findById(1L);
 
         // Assert
-        assertNotNull(foundProduct);
-        assertEquals(1L, foundProduct.getId());
+        assertNotNull(foundProductDto);
+        assertEquals(1L, foundProductDto.getId());
     }
 
     @Test
@@ -45,29 +54,40 @@ class ProductServiceImplTest {
         when(productMapper.findById(1L)).thenReturn(null);
 
         // Act
-        Product foundProduct = productService.findById(1L);
+        ProductDto foundProductDto = productService.findById(1L);
 
         // Assert
-        assertNull(foundProduct);
+        assertNull(foundProductDto);
     }
 
     @Test
-    void save_shouldSaveAndReturnProduct() {
+    void save_shouldSaveAndReturnProductDto() {
         // Arrange
+        ProductDto productDtoToSave = new ProductDto();
+        productDtoToSave.setName("New Product");
+
         Product productToSave = new Product();
         productToSave.setName("New Product");
-        productToSave.setPrice(new BigDecimal("10.00"));
-        productToSave.setStock(100);
-        productToSave.setCreateTime(LocalDateTime.now());
 
+        Product savedProduct = new Product();
+        savedProduct.setId(1L);
+        savedProduct.setName("New Product");
+
+        ProductDto savedProductDto = new ProductDto();
+        savedProductDto.setId(1L);
+        savedProductDto.setName("New Product");
+
+        when(productConverter.toEntity(productDtoToSave)).thenReturn(productToSave);
         when(productMapper.save(any(Product.class))).thenReturn(1);
+        when(productConverter.toDto(any(Product.class))).thenReturn(savedProductDto);
 
         // Act
-        Product savedProduct = productService.save(productToSave);
+        ProductDto result = productService.save(productDtoToSave);
 
         // Assert
-        assertNotNull(savedProduct);
-        assertEquals("New Product", savedProduct.getName());
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("New Product", result.getName());
         verify(productMapper, times(1)).save(productToSave);
     }
 }

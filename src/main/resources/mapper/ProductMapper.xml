@@ -7,13 +7,13 @@
         VALUES (#{name}, #{price}, #{stock}, #{createTime})
     </insert>
 
-    <select id="findById" resultType="com.example.demo.model.Product">
+    <select id="findById" resultType="com.example.demo.model.entity.Product">
         SELECT *
         FROM product
         WHERE id = #{id}
     </select>
 
-    <select id="findAll" resultType="com.example.demo.model.Product">
+    <select id="findAll" resultType="com.example.demo.model.entity.Product">
         SELECT *
         FROM product
     </select>
