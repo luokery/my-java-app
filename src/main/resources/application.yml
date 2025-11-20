@@ -13,19 +13,20 @@ mybatis:
 ---
 spring:
   datasource:
-    # 1. 使用 H2 数据库
-    platform: H2
-    # 2. url用jdbc:h2:mem:manage_db_test
-    url: jdbc:h2:mem:manage_db_test
+    # 1. 使用数据库
+    platform: mysql
+    # 2. url请修改为您的数据库连接
+    url: jdbc:mysql://localhost:3306/your-database?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: your-username
+    password: your-password
     # 3. 连接池使用 druid
     type: com.alibaba.druid.pool.DruidDataSource
     ##数据初始化设置
     #进行该配置后，每次启动程序，程序都会运行(表结构) 
     #always为始终执行初始化，embedded只初始化内存数据库(默认值),如h2等，never为不执行初始化
-    initialization-mode: embedded
+    initialization-mode: always
     sql-script-encoding: utf-8
     schema: classpath:db/schema.sql
-    #进行该配置后，每次启动程序，程序都会运行(数据)
     data: classpath:db/data.sql
     druid:
       initialSize: 5
@@ -38,7 +39,7 @@ spring:
       # 配置一个连接在池中最小生存的时间，单位是毫秒
       minEvictableIdleTimeMillis: 300000
       #用来检测连接是否有效的sql
-      validationQuery: SELECT 1 FROM DUAL
+      validationQuery: SELECT 1
       #申请连接的时候检测，建议配置为true，不影响性能，并且保证安全性
       testWhileIdle: true
       #获取连接时执行检测，建议关闭，影响性能
@@ -94,4 +95,3 @@ spring:
             delete-allow: true
             drop-table-allow: false
           enabled: true
-
