@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Properties>
+        <!-- 从 Spring Boot 的 application.yml 中获取应用名称 -->
+        <Property name="APP_NAME">${spring:spring.application.name:-demo}</Property>
+        <Property name="LOG_PATH">./logs</Property>
+        <!-- 定义统一的日志格式, 增加了 traceId -->
+        <Property name="DEF_LOG_FORMAT">%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-}] [%thread] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- A. 控制台 Appender -->
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="${DEF_LOG_FORMAT}"/>
+        </Console>
+
+        <!-- B. 临时测试文件 Appender (每次启动时清空) -->
+        <File name="TEMP_FILE" fileName="${LOG_PATH}/temp-test.log" append="false">
+            <PatternLayout pattern="${DEF_LOG_FORMAT}"/>
+        </File>
+
+        <!-- C. 滚动归档文件 Appender (记录 WARN 及以上级别) -->
+        <RollingFile name="ROLLING_FILE_ARCHIVE" fileName="${LOG_PATH}/${APP_NAME}.log"
+                     filePattern="${LOG_PATH}/archive/%d{yyyy-MM}/${APP_NAME}.%d{yyyy-MM-dd}.%i.log.gz">
+            <Filters>
+                <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="${DEF_LOG_FORMAT}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${LOG_PATH}/archive" maxDepth="2">
+                    <IfFileName glob="*/*.log.gz"/>
+                    <IfLastModified age="30d"/>
+                    <IfAccumulatedFileSize exceeds="10 GB" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!-- D. 异步日志 Appender -->
+        <Async name="ASYNC_ARCHIVE" bufferSize="256" includeLocation="false">
+             <AppenderRef ref="ROLLING_FILE_ARCHIVE"/>
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="TEMP_FILE"/>
+            <AppenderRef ref="ASYNC_ARCHIVE"/>
+        </Root>
+    </Loggers>
+</Configuration>

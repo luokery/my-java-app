@@ -10,6 +10,7 @@ import com.example.demo.service.api.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
+import org.mybatis.spring.boot.autoconfigure.MybatisLanguageDriverAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,7 +30,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.*;
 
 @WebMvcTest(value = ProductController.class, 
-        excludeAutoConfiguration = {MybatisAutoConfiguration.class})
+        excludeAutoConfiguration = {
+                MybatisAutoConfiguration.class,
+                MybatisLanguageDriverAutoConfiguration.class
+        })
 class ProductControllerTest {
 
     @Autowired
