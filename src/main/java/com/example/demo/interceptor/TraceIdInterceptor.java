@@ -3,8 +3,10 @@ package com.example.demo.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.MDC;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.UUID;
 
@@ -24,7 +26,12 @@ public class TraceIdInterceptor implements HandlerInterceptor {
         response.setHeader(TRACE_ID_HEADER, traceId);
         return true;
     }
-
+    
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+    	
+    }
+    
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         MDC.remove(TRACE_ID_KEY);
