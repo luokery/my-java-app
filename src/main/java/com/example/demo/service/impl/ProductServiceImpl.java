@@ -7,6 +7,8 @@ import com.example.demo.mapper.ProductMapper;
 import com.example.demo.model.dto.ProductDto;
 import com.example.demo.model.entity.Product;
 import com.example.demo.service.api.ProductService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,14 +17,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-
-    private final ProductMapper productMapper;
-    private final ProductConverter productConverter;
-
-    public ProductServiceImpl(ProductMapper productMapper, ProductConverter productConverter) {
-        this.productMapper = productMapper;
-        this.productConverter = productConverter;
-    }
+	
+	@Autowired
+    private ProductMapper productMapper;
 
     @Override
     @Transactional
@@ -33,30 +30,30 @@ public class ProductServiceImpl implements ProductService {
                 throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
             }
         }
-        Product product = productConverter.toEntity(productDto);
+        Product product = ProductConverter.INSTANCE.toEntity(productDto);
         productMapper.save(product);
-        return productConverter.toDto(product);
+        return ProductConverter.INSTANCE.entityToDto(product);
     }
 
     @Override
-    public ProductDto findById(Long id) {
+    public ProductDto findById(String id) {
         Product product = productMapper.findById(id);
         if (product == null) {
             throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
         }
-        return productConverter.toDto(product);
+        return ProductConverter.INSTANCE.entityToDto(product);
     }
 
     @Override
     public List<ProductDto> findAll() {
         return productMapper.findAll().stream()
-                .map(productConverter::toDto)
+                .map(ProductConverter.INSTANCE::entityToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         Product product = productMapper.findById(id);
         if (product == null) {
             throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);

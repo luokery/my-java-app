@@ -1,18 +1,20 @@
 package com.example.demo.model.dto;
 
-import com.example.demo.controller.dto.Groups;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
+
+import com.example.demo.validation.Groups;
 
 @Data
 public class ProductDto {
 
     @Null(groups = Groups.Create.class, message = "ID must be null during creation")
     @NotNull(groups = Groups.Update.class, message = "ID is required for updates")
-    private Long id;
+    private String id;
 
     @NotBlank(groups = {Groups.Create.class, Groups.Update.class}, message = "{product.name.notBlank}")
     @Size(min = 3, max = 50, groups = {Groups.Create.class, Groups.Update.class}, message = "{product.name.size}")

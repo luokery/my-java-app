@@ -2,18 +2,19 @@ package com.example.demo.model.dto;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class CustomerDto {
 
-    private Long id;
+    private String id;
     private String username;
     private String nickname;
     private String email;
     private String password;
     private String gender;
-    private Date birthDate;
+    private LocalDate birthDate;
     private String status;
-    private Date createdAt;
+    private LocalDateTime createTime;
 }

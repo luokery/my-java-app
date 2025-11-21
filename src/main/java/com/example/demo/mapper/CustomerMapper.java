@@ -10,11 +10,11 @@ public interface CustomerMapper {
 
     List<Customer> findAll();
 
-    Customer findById(Long id);
+    Customer findById(String id);
 
     int insert(Customer customer);
 
     int update(Customer customer);
 
-    int deleteById(Long id);
+    int deleteById(String id);
 }

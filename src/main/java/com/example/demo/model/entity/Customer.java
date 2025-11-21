@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 public class Customer {
 
-    private Long id;
+    private String id;
     private String username;
     private String nickname;
     private String email;
@@ -16,5 +16,5 @@ public class Customer {
     private String gender;
     private LocalDate birthDate;
     private String status;
-    private LocalDateTime createdAt;
+    private LocalDateTime createTime;
 }

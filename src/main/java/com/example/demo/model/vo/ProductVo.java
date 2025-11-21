@@ -4,9 +4,15 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.Positive;
+
 @Data
 public class ProductVo {
-    private Long id;
+	
+    private String id;
+    
     private String name;
+    
+    @Positive(message = "price must be a positive number")
     private BigDecimal price;
 }

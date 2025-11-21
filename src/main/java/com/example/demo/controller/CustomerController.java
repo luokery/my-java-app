@@ -37,7 +37,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerVo> getCustomerById(@PathVariable Long id) {
+    public ResponseEntity<CustomerVo> getCustomerById(@PathVariable String id) {
         CustomerDto customerDto = customerService.findById(id);
         CustomerVo customerVo = customerConverter.toVo(customerDto);
         return ResponseEntity.ok(customerVo);
@@ -55,7 +55,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerVo customerVo, BindingResult bindingResult) {
+    public ResponseEntity<?> updateCustomer(@PathVariable String id, @Valid @RequestBody CustomerVo customerVo, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
         }
@@ -67,7 +67,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCustomer(@PathVariable String id) {
         customerService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

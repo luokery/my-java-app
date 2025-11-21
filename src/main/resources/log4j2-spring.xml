@@ -3,9 +3,9 @@
     <Properties>
         <!-- 从 Spring Boot 的 application.yml 中获取应用名称 -->
         <Property name="APP_NAME">${spring:spring.application.name:-demo}</Property>
-        <Property name="LOG_PATH">./logs</Property>
+        <Property name="LOG_PATH">C:/logs2019</Property>
         <!-- 定义统一的日志格式, 增加了 traceId -->
-        <Property name="DEF_LOG_FORMAT">%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-}] [%thread] %-5level %logger{36} - %msg%n</Property>
+        <Property name="DEF_LOG_FORMAT">%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] [%thread] %-5level %logger{36} - %msg%n</Property>
     </Properties>
 
     <Appenders>
@@ -19,22 +19,23 @@
             <PatternLayout pattern="${DEF_LOG_FORMAT}"/>
         </File>
 
-        <!-- C. 滚动归档文件 Appender (记录 WARN 及以上级别) -->
-        <RollingFile name="ROLLING_FILE_ARCHIVE" fileName="${LOG_PATH}/${APP_NAME}.%d{yyyy-MM-dd}.log"
-                     filePattern="${LOG_PATH}/archive/%d{yyyy-MM}/${APP_NAME}.%d{yyyy-MM-dd}.%i.log.gz">
+        <!-- C. 滚动归档文件 Appender (记录 DEBUG 及以上级别) -->
+        <RollingFile name="ROLLING_FILE_ARCHIVE" fileName="${LOG_PATH}/${APP_NAME}-all.log"
+                     filePattern="${LOG_PATH}/archive/%d{yyyy-MM}/${APP_NAME}-all.%d{yyyy-MM-dd}-%i.log.gz">
             <Filters>
-                <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
             <PatternLayout pattern="${DEF_LOG_FORMAT}"/>
             <Policies>
-                <TimeBasedTriggeringPolicy/>
-                <SizeBasedTriggeringPolicy size="10 MB"/>
+				<CronTriggeringPolicy schedule="0 0 0 * * ? *" />
+	            <!-- Policies子节点，基于指定文件大小的滚动策略，size属性用来定义每个日志文件的大小 -->
+	            <SizeBasedTriggeringPolicy size="10KB"/>
             </Policies>
             <DefaultRolloverStrategy max="30">
-                <Delete basePath="${LOG_PATH}/archive" maxDepth="2">
-                    <IfFileName glob="*/*.log.gz"/>
-                    <IfLastModified age="30d"/>
-                    <IfAccumulatedFileSize exceeds="10 GB" />
+                <Delete basePath="${LOG_PATH}/archive" maxDepth="2" testMode="false">
+                    <IfFileName glob="*/*.log.gz"/>				<!-- 如果文件名与此参数匹配 -->
+                    <IfLastModified age="30d"/>					<!-- 最后修改时间早于或等于此参数 -->
+                    <IfAccumulatedFileSize exceeds="10 GB" />	<!-- 所有文件总大小达到此参数 -->
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
@@ -43,29 +44,37 @@
         <Async name="ASYNC_ARCHIVE" bufferSize="256" includeLocation="false">
              <AppenderRef ref="ROLLING_FILE_ARCHIVE"/>
         </Async>
+        
+        <!-- 
+		<AsyncLogger name="org.demo.util" level="info" additivity="false">
+	        <AppenderRef ref="RollingFileAll" level="info"/>
+    	</AsyncLogger>-->
     </Appenders>
 
     <Loggers>
-		<!--过滤掉mybatis的一些无用的DEBUG信息-->
-		<logger name="org.mybatis" level="INFO"/>
-        <!-- -->
+		<!--过滤掉mybatis的一些无用的DEBUG信息
+		<logger name="org.mybatis" level="INFO"/>-->
+        <!-- 
         <logger name="org.springframework" level="INFO"/>
         <logger name="com.alibaba.druid.filter.logging" level="INFO"/>
-        <logger name="org.apache.commons.beanutils" level="ERROR"/>
-        <!-- -->
+        <logger name="org.apache.commons.beanutils" level="ERROR"/>-->
+        <!-- 
         <logger name="org.apache.catalina.util.LifecycleBase" level="ERROR"/>
         <logger name="org.apache.catalina" level="ERROR"/>
-        <logger name="org.apache.tomcat" level="ERROR"/>
+        <logger name="org.apache.tomcat" level="ERROR"/>-->
+        <logger name="com.example.demo" level="DEBUG"/>
+        <logger name="org.springframework.web" level="DEBUG"/>
+        <logger name="org.hibernate" level="DEBUG"/>
+
+        <!-- 不打印请求信息 
+        <logger name="org.apache.coyote.http11" level="ERROR"/>-->
         
-        <!-- 不打印请求信息 -->
-        <logger name="org.apache.coyote.http11" level="ERROR"/>
         
-        
-        <!-- druid 信息级别 -->
+        <!-- druid 信息级别 
         <logger name="druid.sql.DataSource" level="ERROR"/>
         <logger name="druid.sql.Connection" level="ERROR"/>
         <logger name="druid.sql.Statement" level="ERROR"/>
-        <logger name="druid.sql.ResultSet" level="ERROR"/>
+        <logger name="druid.sql.ResultSet" level="ERROR"/>-->
         
         <Root level="INFO">
             <AppenderRef ref="STDOUT"/>

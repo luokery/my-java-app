@@ -8,9 +8,9 @@ public interface CustomerService {
 
     List<CustomerDto> findAll();
 
-    CustomerDto findById(Long id);
+    CustomerDto findById(String id);
 
     CustomerDto save(CustomerDto customerDto);
 
-    void deleteById(Long id);
+    void deleteById(String id);
 }

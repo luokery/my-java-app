@@ -10,9 +10,9 @@ public interface ProductMapper {
 
     int save(Product product);
 
-    Product findById(Long id);
+    Product findById(String id);
 
     List<Product> findAll();
 
-    int deleteById(Long id);
+    int deleteById(String id);
 }

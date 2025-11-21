@@ -1,19 +1,28 @@
-CREATE TABLE product (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    price DECIMAL(10, 2) NOT NULL,
-    stock INT NOT NULL,
-    create_time TIMESTAMP NOT NULL
-);
+CREATE TABLE `product` (
+	`id` VARCHAR(50) NOT NULL COMMENT '产品编号',
+	`name` VARCHAR(255) NOT NULL COMMENT '产品名称',
+	`price` DECIMAL(10,2) NOT NULL,
+	`stock` INT(10) NOT NULL,
+	`create_time` TIMESTAMP NOT NULL,
+	PRIMARY KEY (`id`) USING BTREE
+)
+COLLATE='utf8mb4_0900_ai_ci'
+ENGINE=InnoDB
+;
 
-CREATE TABLE customer (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    nickname VARCHAR(255),
-    email VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    gender VARCHAR(255),
-    birth_date DATE,
-    status VARCHAR(255),
-    created_at TIMESTAMP NOT NULL
-);
+CREATE TABLE `customer` (
+	`id` VARCHAR(16) NOT NULL COMMENT '客户编号',
+	`username` VARCHAR(255) NOT NULL COMMENT '客户名称',
+	`nickname` VARCHAR(255) NULL DEFAULT NULL,
+	`email` VARCHAR(255) NOT NULL,
+	`password` VARCHAR(255) NOT NULL,
+	`gender` VARCHAR(255) NULL DEFAULT NULL,
+	`birth_date` DATE NULL DEFAULT NULL,
+	`status` VARCHAR(255) NULL DEFAULT NULL,
+	`created_at` TIMESTAMP NOT NULL,
+	PRIMARY KEY (`id`) USING BTREE
+)
+COLLATE='utf8mb4_0900_ai_ci'
+ENGINE=InnoDB
+;
+

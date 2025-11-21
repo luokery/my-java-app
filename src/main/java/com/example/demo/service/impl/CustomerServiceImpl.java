@@ -28,17 +28,17 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<CustomerDto> findAll() {
         return customerMapper.findAll().stream()
-                .map(customerConverter::toDto)
+                .map(CustomerConverter.INSTANCE::entityToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public CustomerDto findById(Long id) {
+    public CustomerDto findById(String id) {
         Customer customer = customerMapper.findById(id);
         if (customer == null) {
             throw new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, "Customer with id " + id + " not found");
         }
-        return customerConverter.toDto(customer);
+        return CustomerConverter.INSTANCE.entityToDto(customer);
     }
 
     @Override
@@ -53,11 +53,11 @@ public class CustomerServiceImpl implements CustomerService {
         } else { // Create
             customerMapper.insert(customer);
         }
-        return customerConverter.toDto(customer);
+        return CustomerConverter.INSTANCE.entityToDto(customer);
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         Customer existingCustomer = customerMapper.findById(id);
         if (existingCustomer == null) {
             throw new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, "Customer with id " + id + " not found");

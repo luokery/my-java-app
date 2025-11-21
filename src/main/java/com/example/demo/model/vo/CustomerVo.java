@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 public class CustomerVo {
 
-    private Long id;
+    private String id;
 
     @NotEmpty(message = "{customer.username.notEmpty}")
     @Size(min = 8, max = 25, message = "{customer.username.size}")
@@ -31,5 +31,5 @@ public class CustomerVo {
 
     private String status;
 
-    private Date createdAt;
+    private Date createTime;
 }

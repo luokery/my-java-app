@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class Product {
-    private Long id;
+    private String id;
     private String name;
     private BigDecimal price;
     private Integer stock;
