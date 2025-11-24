@@ -9,7 +9,7 @@ import lombok.Getter;
  * It carries an ErrorCode enum to standardize error responses.
  */
 @Getter
-public class BusinessException extends RuntimeException {
+public class CustomerException extends RuntimeException {
 
     /**
 	 * 
@@ -19,19 +19,19 @@ public class BusinessException extends RuntimeException {
 	private final ResultFace resultFace;
     private final transient Object data; // Optional data payload
 
-    public BusinessException(ResultFace resultFace) {
+    public CustomerException(ResultFace resultFace) {
         super(resultFace.message());
         this.resultFace = resultFace;
         this.data = null;
     }
 
-    public BusinessException(ResultFace resultFace, String message) {
+    public CustomerException(ResultFace resultFace, String message) {
         super(message);
         this.resultFace = resultFace;
         this.data = null;
     }
 
-    public BusinessException(ResultFace resultFace, Object data) {
+    public CustomerException(ResultFace resultFace, Object data) {
         super(resultFace.message());
         this.resultFace = resultFace;
         this.data = data;

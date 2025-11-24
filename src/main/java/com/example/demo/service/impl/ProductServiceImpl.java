@@ -1,8 +1,8 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.converter.ProductConverter;
+import com.example.demo.cosnst.ProductEnum;
 import com.example.demo.exception.BusinessException;
-import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.ProductMapper;
 import com.example.demo.model.dto.ProductDto;
 import com.example.demo.model.entity.Product;
@@ -12,22 +12,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 	
-	@Autowired
     private ProductMapper productMapper;
 
-    @Override
+    public ProductServiceImpl(ProductMapper productMapper) {
+		super();
+		this.productMapper = productMapper;
+	}
+
+	@Override
     @Transactional
     public ProductDto save(ProductDto productDto) {
         if (productDto.getId() != null) { // This is an update operation
             Product existingProduct = productMapper.findById(productDto.getId());
             if (existingProduct == null) {
-                throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
+                throw new BusinessException(ProductEnum.PRODUCT_NOT_FOUND);
             }
         }
         Product product = ProductConverter.INSTANCE.toEntity(productDto);
@@ -39,7 +44,15 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto findById(String id) {
         Product product = productMapper.findById(id);
         if (product == null) {
-            throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
+			try {
+				throw BusinessException.class.getDeclaredConstructor().newInstance(ProductEnum.PRODUCT_NOT_FOUND);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+            throw new BusinessException(ProductEnum.PRODUCT_NOT_FOUND);
         }
         return ProductConverter.INSTANCE.entityToDto(product);
     }
@@ -56,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
     public void deleteById(String id) {
         Product product = productMapper.findById(id);
         if (product == null) {
-            throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND);
+            throw new BusinessException(ProductEnum.PRODUCT_NOT_FOUND);
         }
         productMapper.deleteById(id);
     }

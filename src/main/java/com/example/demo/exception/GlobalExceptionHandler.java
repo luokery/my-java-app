@@ -1,6 +1,11 @@
 package com.example.demo.exception;
 
-import com.example.demo.model.vo.Result;
+import com.example.demo.cosnst.BusinessEnum;
+import com.example.demo.design.policymodel.ExceptionHandlerPolicyModel;
+import com.example.demo.model.vo.ResultVo;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -17,7 +22,20 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	private final static Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+	
+	/**
+	 * 异常处理策略模型
+	 */
+	private ExceptionResolver exceptionResolver;
+	
+    public GlobalExceptionHandler(ExceptionResolver exceptionResolver) {
+		super();
+		this.exceptionResolver = exceptionResolver;
+	}
+
     /**
+     * 所有的业务异常处理
      * Handles specific business logic exceptions.
      * The HTTP status is 200 for most business errors, except for 403, 404, 500.
      * The 'code' in the response body contains the specific business error code.
@@ -26,22 +44,18 @@ public class GlobalExceptionHandler {
      * @return A ResponseEntity containing the standardized error response.
      */
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<Result<Object>> handleBusinessException(BusinessException ex) {
-        ErrorCode errorCode = ex.getErrorCode();
-        // The 'code' in the body is always the specific error code from the enum
-        Result<Object> result = Result.error(errorCode.getHttpStatus(), errorCode.getMessage(), ex.getData());
-
-        // Determine the HTTP status code based on the new rule
-        HttpStatus httpStatus;
-        int errorCodeHttpStatus = errorCode.getHttpStatus();
-
-        if (errorCodeHttpStatus == 403 || errorCodeHttpStatus == 404 || errorCodeHttpStatus == 500) {
-            httpStatus = HttpStatus.valueOf(errorCodeHttpStatus);
-        } else {
-            httpStatus = HttpStatus.OK;
-        }
-
-        return new ResponseEntity<>(result, httpStatus);
+    public ResultVo<Object> handleBusinessException(BusinessException ex) {
+    	
+    	ExceptionHandlerPolicyModel exceptionHandler = exceptionResolver.getHandler(ex.getClass());
+    	
+    	if(null != exceptionHandler) {
+    		
+    		log.info("全局异常处理: ", ex); // FIXME : 是否需要异常自己处理, 异常的日志等级, 现在全抛错误. info warn error
+    		return exceptionHandler.handler( ex);
+    	}else {
+        	log.error("系统异常: {}", BusinessEnum.UNKONW_ERROR.getMsg(), ex);
+            return ResultVo.build(BusinessEnum.UNKONW_ERROR);
+    	}
     }
 
     /**
@@ -58,7 +72,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         // This will be caught and handled by handleBusinessException
-        throw new BusinessException(ErrorCode.VALIDATION_ERROR, errors);
+        throw new BusinessException(com.example.demo.cosnst.ResultEnum.VALIDATION_ERROR, errors);
     }
 
     /**
@@ -68,10 +82,18 @@ public class GlobalExceptionHandler {
      * @return A generic internal server error response.
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Result<Object>> handleAllOtherExceptions(Exception ex) {
+    public ResultVo<Object> handleAllOtherExceptions(Exception ex) {
         // In a real application, you would log the exception ex here
-        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
-        Result<Object> result = Result.error(errorCode.getHttpStatus(), errorCode.getMessage());
-        return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+        
+    	ExceptionHandlerPolicyModel exceptionHandler = exceptionResolver.getHandler(ex.getClass());
+    	
+    	if(null != exceptionHandler) {
+    		
+    		log.error("全局异常处理: ", ex); // FIXME : 是否需要异常自己处理, 异常的日志等级, 现在全抛错误. info warn error
+    		return exceptionHandler.handler( ex);
+    	}else {
+        	log.error("系统异常: {}", BusinessEnum.UNKONW_ERROR.getMsg(), ex);
+            return ResultVo.build(BusinessEnum.UNKONW_ERROR);
+    	}
     }
 }
