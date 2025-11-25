@@ -5,12 +5,11 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import com.example.demo.validation.Groups;
 
 @Data
-public class ProductDto {
+public class ProductDTO {
 
     @Null(groups = Groups.Create.class, message = "ID must be null during creation")
     @NotNull(groups = Groups.Update.class, message = "ID is required for updates")

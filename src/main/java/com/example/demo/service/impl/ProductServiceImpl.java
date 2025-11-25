@@ -4,7 +4,7 @@ import com.example.demo.converter.ProductConverter;
 import com.example.demo.cosnst.ProductEnum;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.mapper.ProductMapper;
-import com.example.demo.model.dto.ProductDto;
+import com.example.demo.model.dto.ProductDTO;
 import com.example.demo.model.entity.Product;
 import com.example.demo.service.api.ProductService;
 
@@ -28,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
     @Transactional
-    public ProductDto save(ProductDto productDto) {
+    public ProductDTO save(ProductDTO productDto) {
         if (productDto.getId() != null) { // This is an update operation
             Product existingProduct = productMapper.findById(productDto.getId());
             if (existingProduct == null) {
@@ -41,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto findById(String id) {
+    public ProductDTO findById(String id) {
         Product product = productMapper.findById(id);
         if (product == null) {
 			try {
@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> findAll() {
+    public List<ProductDTO> findAll() {
         return productMapper.findAll().stream()
                 .map(ProductConverter.INSTANCE::entityToDto)
                 .collect(Collectors.toList());

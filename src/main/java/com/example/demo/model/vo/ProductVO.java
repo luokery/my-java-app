@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import jakarta.validation.constraints.Positive;
 
 @Data
-public class ProductVo {
+public class ProductVO {
 	
     private String id;
     

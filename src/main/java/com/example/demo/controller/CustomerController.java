@@ -1,13 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.converter.CustomerConverter;
-import com.example.demo.model.dto.CustomerDto;
-import com.example.demo.model.vo.CustomerVo;
+import com.example.demo.model.dto.CustomerDTO;
+import com.example.demo.model.vo.CustomerVO;
+import com.example.demo.model.vo.ResponseVO;
+import com.example.demo.model.vo.Result;
 import com.example.demo.service.CustomerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,47 +29,41 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerVo>> getAllCustomers() {
-        List<CustomerDto> customerDtos = customerService.findAll();
-        List<CustomerVo> customerVos = customerDtos.stream()
+    public ResponseVO<List<CustomerVO>> getAllCustomers() {
+        List<CustomerDTO> customerDtos = customerService.findAll();
+        List<CustomerVO> customerVos = customerDtos.stream()
                 .map(customerConverter::toVo)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(customerVos);
+        return Result.success(customerVos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerVo> getCustomerById(@PathVariable String id) {
-        CustomerDto customerDto = customerService.findById(id);
-        CustomerVo customerVo = customerConverter.toVo(customerDto);
-        return ResponseEntity.ok(customerVo);
+    public ResponseVO<CustomerVO> getCustomerById(@PathVariable String id) {
+        CustomerDTO customerDto = customerService.findById(id);
+        CustomerVO customerVo = customerConverter.toVo(customerDto);
+        return Result.success(customerVo);
     }
 
     @PostMapping
-    public ResponseEntity<?> createCustomer(@Valid @RequestBody CustomerVo customerVo, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
-        }
-        CustomerDto customerDto = customerConverter.toDto(customerVo);
-        CustomerDto savedCustomer = customerService.save(customerDto);
-        CustomerVo savedCustomerVo = customerConverter.toVo(savedCustomer);
-        return new ResponseEntity<>(savedCustomerVo, HttpStatus.CREATED);
+    public ResponseVO<CustomerVO> createCustomer(@Valid @RequestBody CustomerVO customerVo, BindingResult bindingResult) {
+        CustomerDTO customerDto = customerConverter.toDto(customerVo);
+        CustomerDTO savedCustomer = customerService.save(customerDto);
+        CustomerVO savedCustomerVo = customerConverter.toVo(savedCustomer);
+        return Result.success(savedCustomerVo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable String id, @Valid @RequestBody CustomerVo customerVo, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
-        }
-        CustomerDto customerDto = customerConverter.toDto(customerVo);
+    public ResponseVO<CustomerVO> updateCustomer(@PathVariable String id, @Valid @RequestBody CustomerVO customerVo, BindingResult bindingResult) {
+        CustomerDTO customerDto = customerConverter.toDto(customerVo);
         customerDto.setId(id);
-        CustomerDto updatedCustomer = customerService.save(customerDto);
-        CustomerVo updatedCustomerVo = customerConverter.toVo(updatedCustomer);
-        return ResponseEntity.ok(updatedCustomerVo);
+        CustomerDTO updatedCustomer = customerService.save(customerDto);
+        CustomerVO updatedCustomerVo = customerConverter.toVo(updatedCustomer);
+        return Result.success(updatedCustomerVo);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable String id) {
+    public ResponseVO<Void> deleteCustomer(@PathVariable String id) {
         customerService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return Result.success();
     }
 }

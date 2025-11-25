@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class CustomerVo {
+public class CustomerVO {
 
     private String id;
 

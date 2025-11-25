@@ -2,7 +2,8 @@ package com.example.demo.exception;
 
 import com.example.demo.cosnst.BusinessEnum;
 import com.example.demo.design.policymodel.ExceptionHandlerPolicyModel;
-import com.example.demo.model.vo.ResultVo;
+import com.example.demo.model.vo.ResponseVO;
+import com.example.demo.model.vo.Result;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public class GlobalExceptionHandler {
      * @return A ResponseEntity containing the standardized error response.
      */
     @ExceptionHandler(BusinessException.class)
-    public ResultVo<Object> handleBusinessException(BusinessException ex) {
+    public ResponseVO<?> handleBusinessException(BusinessException ex) {
     	
     	ExceptionHandlerPolicyModel exceptionHandler = exceptionResolver.getHandler(ex.getClass());
     	
@@ -54,7 +55,7 @@ public class GlobalExceptionHandler {
     		return exceptionHandler.handler( ex);
     	}else {
         	log.error("系统异常: {}", BusinessEnum.UNKONW_ERROR.getMsg(), ex);
-            return ResultVo.build(BusinessEnum.UNKONW_ERROR);
+            return Result.build(BusinessEnum.UNKONW_ERROR);
     	}
     }
 
@@ -82,7 +83,7 @@ public class GlobalExceptionHandler {
      * @return A generic internal server error response.
      */
     @ExceptionHandler(Exception.class)
-    public ResultVo<Object> handleAllOtherExceptions(Exception ex) {
+    public ResponseVO<?> handleAllOtherExceptions(Exception ex) {
         // In a real application, you would log the exception ex here
         
     	ExceptionHandlerPolicyModel exceptionHandler = exceptionResolver.getHandler(ex.getClass());
@@ -93,7 +94,7 @@ public class GlobalExceptionHandler {
     		return exceptionHandler.handler( ex);
     	}else {
         	log.error("系统异常: {}", BusinessEnum.UNKONW_ERROR.getMsg(), ex);
-            return ResultVo.build(BusinessEnum.UNKONW_ERROR);
+            return Result.build(BusinessEnum.UNKONW_ERROR);
     	}
     }
 }

@@ -1,11 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.converter.ProductConverter;
-import com.example.demo.model.dto.ProductDto;
-import com.example.demo.model.vo.ResultVo;
+import com.example.demo.model.dto.ProductDTO;
 import com.example.demo.service.api.ProductService;
 import com.example.demo.validation.Groups;
-import com.example.demo.model.vo.ProductVo;
+import com.example.demo.model.vo.ProductVO;
+import com.example.demo.model.vo.ResponseVO;
+import com.example.demo.model.vo.Result;
 
 import jakarta.validation.constraints.NotBlank;
 import org.slf4j.Logger;
@@ -32,41 +33,41 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResultVo<ProductVo> save(@Validated(Groups.Create.class) @RequestBody ProductVo productVo) {
+    public ResponseVO<ProductVO> save(@Validated(Groups.Create.class) @RequestBody ProductVO productVo) {
         log.info("Saving product: {}", productVo);
         
-        ProductDto productDto = ProductConverter.INSTANCE.toDto(productVo);
-        ProductDto savedProductDto = productService.save(productDto);
-        return ResultVo.success(ProductConverter.INSTANCE.toVo(savedProductDto));
+        ProductDTO productDto = ProductConverter.INSTANCE.toDto(productVo);
+        ProductDTO savedProductDto = productService.save(productDto);
+        return Result.success(ProductConverter.INSTANCE.toVo(savedProductDto));
     }
 
     @PutMapping("/{id}")
-    public ResultVo<ProductVo> update(@PathVariable String id, @Validated(Groups.Update.class) @RequestBody ProductVo productVo) {
+    public ResponseVO<ProductVO> update(@PathVariable String id, @Validated(Groups.Update.class) @RequestBody ProductVO productVo) {
         log.info("Updating product with id: {}, data: {}", id, productVo);
         
-        ProductDto productDto = ProductConverter.INSTANCE.toDto(productVo);
+        ProductDTO productDto = ProductConverter.INSTANCE.toDto(productVo);
         productDto.setId(id);
         
-        ProductDto updatedProductDto = productService.save(productDto);
-        return ResultVo.success(ProductConverter.INSTANCE.toVo(updatedProductDto));
+        ProductDTO updatedProductDto = productService.save(productDto);
+        return Result.success(ProductConverter.INSTANCE.toVo(updatedProductDto));
     }
 
     @GetMapping("/{id}")
-    public ResultVo<ProductVo> findById(@Validated(Groups.Query.class) @PathVariable String id) {
+    public ResponseVO<ProductVO> findById(@Validated(Groups.Query.class) @PathVariable String id) {
         log.info("Finding product by id: {}", id);
         
-        ProductDto productDto = productService.findById(id);
-        return ResultVo.success(ProductConverter.INSTANCE.toVo(productDto));
+        ProductDTO productDto = productService.findById(id);
+        return Result.success(ProductConverter.INSTANCE.toVo(productDto));
     }
 
     @GetMapping
-    public ResultVo<List<ProductVo>> findAll() {
+    public ResponseVO<List<ProductVO>> findAll() {
         log.info("Finding all products");
-        List<ProductDto> productDtos = productService.findAll();
-        List<ProductVo> productVos = productDtos.stream()
+        List<ProductDTO> productDtos = productService.findAll();
+        List<ProductVO> productVos = productDtos.stream()
                 .map(ProductConverter.INSTANCE::toVo)
                 .collect(Collectors.toList());
-        return ResultVo.success(productVos);
+        return Result.success(productVos);
     }
 
     @DeleteMapping("/{id}")

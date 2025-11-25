@@ -4,7 +4,7 @@ import com.example.demo.converter.CustomerConverter;
 import com.example.demo.cosnst.CustomerEnum;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.mapper.CustomerMapper;
-import com.example.demo.model.dto.CustomerDto;
+import com.example.demo.model.dto.CustomerDTO;
 import com.example.demo.model.entity.Customer;
 import com.example.demo.service.CustomerService;
 import org.springframework.stereotype.Service;
@@ -22,14 +22,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerDto> findAll() {
+    public List<CustomerDTO> findAll() {
         return customerMapper.findAll().stream()
                 .map(CustomerConverter.INSTANCE::entityToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public CustomerDto findById(String id) {
+    public CustomerDTO findById(String id) {
         Customer customer = customerMapper.findById(id);
         if (customer == null) {
             throw new BusinessException(CustomerEnum.CUSTOMER_NOT_FOUND, "Customer with id " + id + " not found");
@@ -38,7 +38,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDto save(CustomerDto customerDto) {
+    public CustomerDTO save(CustomerDTO customerDto) {
         Customer customer = CustomerConverter.INSTANCE.toEntity(customerDto);
         if (customer.getId() != null) { // Update
             Customer existingCustomer = customerMapper.findById(customer.getId());

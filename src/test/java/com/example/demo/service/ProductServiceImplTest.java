@@ -4,7 +4,7 @@ import com.example.demo.converter.ProductConverter;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.mapper.ProductMapper;
-import com.example.demo.model.dto.ProductDto;
+import com.example.demo.model.dto.ProductDTO;
 import com.example.demo.model.entity.Product;
 import com.example.demo.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.Test;

@@ -4,11 +4,12 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.design.policymodel.ExceptionHandlerPolicyModel;
 import com.example.demo.exception.CustomerException;
-import com.example.demo.model.vo.ResultVo;
+import com.example.demo.model.vo.ResponseVO;
+import com.example.demo.model.vo.Result;
 
 
 /**
- * 策略模型: 用户异常处理
+ * 策略模型: 客户异常处理
  * @author 
  *
  */
@@ -21,7 +22,7 @@ public class CustomerExceptionHandler implements ExceptionHandlerPolicyModel<Cus
 	}
 	
 	@Override
-	public ResultVo handler(CustomerException exception) {
-		return ResultVo.error(exception.getResultFace().code(), exception.getMessage());
+	public ResponseVO<CustomerException> handler(CustomerException exception) {
+		return Result.build(exception.getResultFace(), null);
 	}
 }

@@ -1,16 +1,16 @@
 package com.example.demo.service;
 
-import com.example.demo.model.dto.CustomerDto;
+import com.example.demo.model.dto.CustomerDTO;
 
 import java.util.List;
 
 public interface CustomerService {
 
-    List<CustomerDto> findAll();
+    List<CustomerDTO> findAll();
 
-    CustomerDto findById(String id);
+    CustomerDTO findById(String id);
 
-    CustomerDto save(CustomerDto customerDto);
+    CustomerDTO save(CustomerDTO customerDto);
 
     void deleteById(String id);
 }

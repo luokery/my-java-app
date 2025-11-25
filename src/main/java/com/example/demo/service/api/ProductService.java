@@ -1,11 +1,11 @@
 package com.example.demo.service.api;
 
-import com.example.demo.model.dto.ProductDto;
+import com.example.demo.model.dto.ProductDTO;
 import java.util.List;
 
 public interface ProductService {
-    ProductDto save(ProductDto productDto);
-    ProductDto findById(String id);
-    List<ProductDto> findAll();
+    ProductDTO save(ProductDTO productDto);
+    ProductDTO findById(String id);
+    List<ProductDTO> findAll();
     void deleteById(String id);
 }

@@ -4,7 +4,8 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.design.policymodel.ExceptionHandlerPolicyModel;
 import com.example.demo.exception.BusinessException;
-import com.example.demo.model.vo.ResultVo;
+import com.example.demo.model.vo.ResponseVO;
+import com.example.demo.model.vo.Result;
 
 /**
  * 策略模型: 业务异常处理
@@ -20,7 +21,7 @@ public class BusinessExceptionHandler implements ExceptionHandlerPolicyModel<Bus
 	}
 
 	@Override
-	public ResultVo handler(BusinessException exception) {
-		return ResultVo.error(exception.getResultFace().code(), exception.getMessage());
+	public ResponseVO<BusinessException> handler(BusinessException exception) {
+		return Result.build(exception.getResultFace(), null);
 	}
 }

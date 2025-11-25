@@ -1,6 +1,6 @@
 package com.example.demo.design.policymodel;
 
-import com.example.demo.model.vo.ResultVo;
+import com.example.demo.model.vo.ResponseVO;
 
 /**
  * 异常处理策略模型
@@ -14,5 +14,5 @@ public interface ExceptionHandlerPolicyModel<T> extends PolicyModel<T> {
 	 * @param exception 具体异常
 	 * @return
 	 */
-	ResultVo<T> handler(T exception);
+	ResponseVO<T> handler(T exception);
 }
