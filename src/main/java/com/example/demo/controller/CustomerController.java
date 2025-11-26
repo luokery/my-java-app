@@ -32,7 +32,7 @@ public class CustomerController {
     public ResponseVO<List<CustomerVO>> getAllCustomers() {
         List<CustomerDTO> customerDtos = customerService.findAll();
         List<CustomerVO> customerVos = customerDtos.stream()
-                .map(customerConverter::toVo)
+                .map(customerConverter::toVO)
                 .collect(Collectors.toList());
         return Result.success(customerVos);
     }
@@ -40,24 +40,24 @@ public class CustomerController {
     @GetMapping("/{id}")
     public ResponseVO<CustomerVO> getCustomerById(@PathVariable String id) {
         CustomerDTO customerDto = customerService.findById(id);
-        CustomerVO customerVo = customerConverter.toVo(customerDto);
+        CustomerVO customerVo = customerConverter.toVO(customerDto);
         return Result.success(customerVo);
     }
 
     @PostMapping
     public ResponseVO<CustomerVO> createCustomer(@Valid @RequestBody CustomerVO customerVo, BindingResult bindingResult) {
-        CustomerDTO customerDto = customerConverter.toDto(customerVo);
+        CustomerDTO customerDto = customerConverter.toDTO(customerVo);
         CustomerDTO savedCustomer = customerService.save(customerDto);
-        CustomerVO savedCustomerVo = customerConverter.toVo(savedCustomer);
+        CustomerVO savedCustomerVo = customerConverter.toVO(savedCustomer);
         return Result.success(savedCustomerVo);
     }
 
     @PutMapping("/{id}")
     public ResponseVO<CustomerVO> updateCustomer(@PathVariable String id, @Valid @RequestBody CustomerVO customerVo, BindingResult bindingResult) {
-        CustomerDTO customerDto = customerConverter.toDto(customerVo);
+        CustomerDTO customerDto = customerConverter.toDTO(customerVo);
         customerDto.setId(id);
         CustomerDTO updatedCustomer = customerService.save(customerDto);
-        CustomerVO updatedCustomerVo = customerConverter.toVo(updatedCustomer);
+        CustomerVO updatedCustomerVo = customerConverter.toVO(updatedCustomer);
         return Result.success(updatedCustomerVo);
     }
 

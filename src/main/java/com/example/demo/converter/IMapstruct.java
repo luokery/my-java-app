@@ -9,26 +9,26 @@ public interface IMapstruct<V, D, E> {
 	 * @param vo
 	 * @return
 	 */
-    D toDto(V vo);
+    D toDTO(V vo);
 	/**
 	 * Vo list 转换为 Dto list
 	 * @param List vo
 	 * @return
 	 */
-    List<D> toDto(List<V> vo);
+    List<D> toDTO(List<V> vo);
     
 	/**
 	 * dto 转换为 vo
 	 * @param dto
 	 * @return
 	 */
-    V toVo(D dto);
+    V toVO(D dto);
 	/**
 	 * Dto list 转换为 Vo list
 	 * @param List dto
 	 * @return
 	 */
-    List<V> toVo(List<D> dto);
+    List<V> toVO(List<D> dto);
     
 	/**
 	 * dto 转换为 entity
@@ -48,11 +48,11 @@ public interface IMapstruct<V, D, E> {
 	 * @param entity
 	 * @return
 	 */
-    D entityToDto(E entity);
+    D entityToDTO(E entity);
 	/**
 	 * entity list 转换为 dto list
 	 * @param List entity
 	 * @return
 	 */
-    List<D> entityToDto(List<E> entity);
+    List<D> entityToDTO(List<E> entity);
 }

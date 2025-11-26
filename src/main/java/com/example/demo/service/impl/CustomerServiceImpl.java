@@ -24,7 +24,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<CustomerDTO> findAll() {
         return customerMapper.findAll().stream()
-                .map(CustomerConverter.INSTANCE::entityToDto)
+                .map(CustomerConverter.INSTANCE::entityToDTO)
                 .collect(Collectors.toList());
     }
 
@@ -34,7 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer == null) {
             throw new BusinessException(CustomerEnum.CUSTOMER_NOT_FOUND, "Customer with id " + id + " not found");
         }
-        return CustomerConverter.INSTANCE.entityToDto(customer);
+        return CustomerConverter.INSTANCE.entityToDTO(customer);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class CustomerServiceImpl implements CustomerService {
         } else { // Create
             customerMapper.insert(customer);
         }
-        return CustomerConverter.INSTANCE.entityToDto(customer);
+        return CustomerConverter.INSTANCE.entityToDTO(customer);
     }
 
     @Override

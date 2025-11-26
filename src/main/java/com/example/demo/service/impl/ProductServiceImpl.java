@@ -37,30 +37,22 @@ public class ProductServiceImpl implements ProductService {
         }
         Product product = ProductConverter.INSTANCE.toEntity(productDto);
         productMapper.save(product);
-        return ProductConverter.INSTANCE.entityToDto(product);
+        return ProductConverter.INSTANCE.entityToDTO(product);
     }
 
     @Override
     public ProductDTO findById(String id) {
         Product product = productMapper.findById(id);
         if (product == null) {
-			try {
-				throw BusinessException.class.getDeclaredConstructor().newInstance(ProductEnum.PRODUCT_NOT_FOUND);
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
             throw new BusinessException(ProductEnum.PRODUCT_NOT_FOUND);
         }
-        return ProductConverter.INSTANCE.entityToDto(product);
+        return ProductConverter.INSTANCE.entityToDTO(product);
     }
 
     @Override
     public List<ProductDTO> findAll() {
         return productMapper.findAll().stream()
-                .map(ProductConverter.INSTANCE::entityToDto)
+                .map(ProductConverter.INSTANCE::entityToDTO)
                 .collect(Collectors.toList());
     }
 
