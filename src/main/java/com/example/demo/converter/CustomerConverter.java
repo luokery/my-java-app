@@ -2,7 +2,7 @@ package com.example.demo.converter;
 
 import com.example.demo.model.dto.CustomerDTO;
 import com.example.demo.model.entity.Customer;
-import com.example.demo.model.vo.CustomerVO;
+import com.example.demo.model.vo.customer.CustomerVO;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

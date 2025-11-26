@@ -4,10 +4,10 @@ import com.example.demo.converter.ProductConverter;
 import com.example.demo.model.dto.ProductDTO;
 import com.example.demo.service.api.ProductService;
 import com.example.demo.validation.Groups;
-import com.example.demo.model.vo.ProductVO;
 import com.example.demo.model.vo.RequestVO;
 import com.example.demo.model.vo.ResponseVO;
 import com.example.demo.model.vo.Result;
+import com.example.demo.model.vo.product.ProductVO;
 
 import jakarta.validation.constraints.NotBlank;
 import org.slf4j.Logger;

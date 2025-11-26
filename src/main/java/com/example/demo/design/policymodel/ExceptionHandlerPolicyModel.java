@@ -14,5 +14,5 @@ public interface ExceptionHandlerPolicyModel<T> extends PolicyModel<T> {
 	 * @param exception 具体异常
 	 * @return
 	 */
-	ResponseVO<T> handler(T exception);
+	ResponseVO<?> handler(T exception);
 }

@@ -5,7 +5,7 @@ import org.mapstruct.factory.Mappers;
 
 import com.example.demo.model.dto.ProductDTO;
 import com.example.demo.model.entity.Product;
-import com.example.demo.model.vo.ProductVO;
+import com.example.demo.model.vo.product.ProductVO;
 
 
 @Mapper(componentModel = "spring")

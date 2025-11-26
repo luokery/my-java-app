@@ -5,7 +5,6 @@ import com.example.demo.converter.ProductConverter;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.ErrorCode;
 import com.example.demo.model.dto.ProductDTO;
-import com.example.demo.model.vo.ProductVO;
 import com.example.demo.service.api.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

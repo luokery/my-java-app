@@ -12,7 +12,8 @@ public enum ResultEnum implements ResultFace {
     VALIDATION_ERROR(400, "Validation failed"),
     // 404 Not Found
     PRODUCT_NOT_FOUND(404, "Product not found"),
-	
+    
+    PARAM_VERIFY_ERROR(6, "参数验证失败"),
     PARAM_c_ERROR(5, "参数转换失败"),
     PARAM_v_ERROR(6, "参数验证失败"),
     Unauthorized(401, "请先登录"),

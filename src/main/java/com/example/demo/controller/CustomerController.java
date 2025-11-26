@@ -2,9 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.converter.CustomerConverter;
 import com.example.demo.model.dto.CustomerDTO;
-import com.example.demo.model.vo.CustomerVO;
 import com.example.demo.model.vo.ResponseVO;
 import com.example.demo.model.vo.Result;
+import com.example.demo.model.vo.customer.CustomerVO;
 import com.example.demo.service.CustomerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
