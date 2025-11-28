@@ -19,7 +19,7 @@ public class ProductVO {
     private String id;
 	
 	@NotBlank(groups = {Groups.Create.class, Groups.Update.class}, message = "{product.name.notBlank}")
-	@Pattern(groups = {Groups.Create.class, Groups.Update.class}, regexp="^[a-zA-Z0-9]+$", message="{product.name.pattern}")
+	@Pattern(groups = {Groups.Create.class, Groups.Update.class}, regexp="^[a-zA-Z0-9\u4e00-\u9fa5.]+$", message="{product.name.pattern}")
 	@Size(min=2, max=50, message="{product.name.size}")
     private String name;
     

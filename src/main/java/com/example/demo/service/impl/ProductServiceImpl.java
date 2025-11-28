@@ -7,9 +7,14 @@ import com.example.demo.mapper.ProductMapper;
 import com.example.demo.model.dto.ProductDTO;
 import com.example.demo.model.entity.Product;
 import com.example.demo.service.api.ProductService;
+import com.example.demo.validation.Groups;
+
+import jakarta.validation.GroupSequence;
+import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,11 +32,10 @@ public class ProductServiceImpl implements ProductService {
 	@Override
     @Transactional
     public ProductDTO save(ProductDTO productDto) {
-        if (productDto.getId() != null) { // This is an update operation
-            Product existingProduct = productMapper.findById(productDto.getId());
-            if (existingProduct == null) {
-                throw new BusinessException(ProductEnum.PRODUCT_NOT_FOUND);
-            }
+		
+        Product existingProduct = productMapper.findById(productDto.getId());
+        if (existingProduct != null) {
+            throw new BusinessException(ProductEnum.PRODUCT_already_exists);
         }
         Product product = ProductConverter.INSTANCE.toEntity(productDto);
         productMapper.save(product);

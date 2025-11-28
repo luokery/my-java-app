@@ -4,6 +4,10 @@ import com.example.demo.converter.ProductConverter;
 import com.example.demo.model.dto.ProductDTO;
 import com.example.demo.service.api.ProductService;
 import com.example.demo.validation.Groups;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import com.example.demo.model.vo.RequestVO;
 import com.example.demo.model.vo.ResponseVO;
 import com.example.demo.model.vo.Result;
@@ -22,7 +26,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
-@Validated
+@Tag(name="产品管理")
 public class ProductController {
 
     private static final Logger log = LoggerFactory.getLogger(ProductController.class);
@@ -33,10 +37,11 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @Operation(summary = "创建")
     @PostMapping
     @Transactional(rollbackFor = Exception.class)
     public ResponseVO<ProductVO> save(@Validated(Groups.Create.class) @RequestBody RequestVO<ProductVO> requestVO) {
-    	log.info("业务处理: 开始; UserController: save data={}", requestVO);
+    	log.info("业务处理: 开始; save data={}", requestVO);
         
     	ProductVO dataVO = null;
 

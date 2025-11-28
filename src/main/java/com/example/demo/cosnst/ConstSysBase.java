@@ -15,7 +15,7 @@ public interface ConstSysBase {
 	/**
 	 * 日志流水号
 	 */
-	public static final String BUSINESS_NO_KEY = "BUSINESS_NO";
+	public static final String BUSINESS_NO_KEY = "traceId";
 	
 	/**
 	 * 验证码存活时间

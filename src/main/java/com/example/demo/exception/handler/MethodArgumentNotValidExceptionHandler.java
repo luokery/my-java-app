@@ -15,7 +15,7 @@ import com.example.demo.model.vo.ResponseVO;
 import com.example.demo.model.vo.Result;
 
 /**
- * 策略模型: 验证异常处理
+ * 策略模型: 参数验证异常处理
  * @author 
  *
  */

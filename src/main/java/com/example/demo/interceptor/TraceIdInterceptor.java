@@ -7,13 +7,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.demo.cosnst.ConstSysBase;
+
 import java.util.UUID;
 
 @Component
 public class TraceIdInterceptor implements HandlerInterceptor {
 
     private static final String TRACE_ID_HEADER = "X-Trace-ID";
-    private static final String TRACE_ID_KEY = "traceId";
+    private static final String TRACE_ID_KEY = ConstSysBase.BUSINESS_NO_KEY;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

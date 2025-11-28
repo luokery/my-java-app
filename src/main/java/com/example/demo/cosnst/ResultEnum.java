@@ -19,6 +19,9 @@ public enum ResultEnum implements ResultFace {
     Unauthorized(401, "请先登录"),
     Forbidden(403, "没有权限!"),
     LoginFailure(401, "登录凭证已失效，请重新登录"),
+    
+    SPRING_MASSAGE_ERROR(9 , "请检查参数或者请求消息格式."),
+    SPRING_RESOURCE_NOT_FOUND(9 , "资源未找到.")
     ;
 
     private Integer code;

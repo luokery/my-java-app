@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
     	
     	if(null != exceptionHandler) {
     		
-    		log.info("全局异常处理: ", ex); // FIXME : 是否需要异常自己处理, 异常的日志等级, 现在全抛错误. info warn error
+    		log.info("业务异常处理: ", ex); // FIXME : 是否需要异常自己处理, 异常的日志等级, 现在全抛错误. info warn error
     		return exceptionHandler.handler( ex);
     	}else {
         	log.error("系统异常: {}", BusinessEnum.UNKONW_ERROR.getMsg(), ex);
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
      *
      * @param ex The MethodArgumentNotValidException that was thrown.
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
     public void handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {

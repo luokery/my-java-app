@@ -7,7 +7,10 @@ import lombok.Data;
 
 import java.util.Date;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Data
+@Schema(description = "客户实体类")
 public class CustomerVO {
 
     private String id;

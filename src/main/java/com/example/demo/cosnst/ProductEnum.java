@@ -39,7 +39,8 @@ public enum ProductEnum implements ResultFace {
     BUSS_DATA_USER_NAME_EXISTENT(154, "错误: 用户名存在."),
     
     
-    PRODUCT_NOT_FOUND(404, "商品未找到")
+    PRODUCT_NOT_FOUND(404, "商品未找到"),
+    PRODUCT_already_exists(404, "商品已经存在")
     ;
 
     private Integer code;
