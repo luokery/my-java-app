@@ -1,6 +1,7 @@
 package com.example.demo.exception;
 
 import com.example.demo.cosnst.BusinessEnum;
+import com.example.demo.cosnst.ResultEnum;
 import com.example.demo.design.policymodel.ExceptionHandlerPolicyModel;
 import com.example.demo.model.vo.ResponseVO;
 import com.example.demo.model.vo.Result;
@@ -65,16 +66,16 @@ public class GlobalExceptionHandler {
      * @param ex The MethodArgumentNotValidException that was thrown.
      */
 //    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public void handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        // This will be caught and handled by handleBusinessException
-        throw new BusinessException(com.example.demo.cosnst.ResultEnum.VALIDATION_ERROR, errors);
-    }
+//    public void handleValidationExceptions(MethodArgumentNotValidException ex) {
+//        Map<String, String> errors = new HashMap<>();
+//        ex.getBindingResult().getAllErrors().forEach((error) -> {
+//            String fieldName = ((FieldError) error).getField();
+//            String errorMessage = error.getDefaultMessage();
+//            errors.put(fieldName, errorMessage);
+//        });
+//        // This will be caught and handled by handleBusinessException
+//        throw new BusinessException(ResultEnum.VALIDATION_ERROR, errors);
+//    }
 
     /**
      * A fallback handler for all other exceptions.

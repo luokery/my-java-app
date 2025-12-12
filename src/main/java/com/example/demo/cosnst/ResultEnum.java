@@ -21,7 +21,8 @@ public enum ResultEnum implements ResultFace {
     LoginFailure(401, "登录凭证已失效，请重新登录"),
     
     SPRING_MASSAGE_ERROR(9 , "请检查参数或者请求消息格式."),
-    SPRING_RESOURCE_NOT_FOUND(9 , "资源未找到.")
+    SPRING_RESOURCE_NOT_FOUND(9 , "资源未找到."),
+    PARAM_DATA_NOT_NULL(9 , "添加失败: 传入的实体为空"),
     ;
 
     private Integer code;

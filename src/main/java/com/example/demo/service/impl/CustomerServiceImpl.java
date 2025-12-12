@@ -6,7 +6,10 @@ import com.example.demo.exception.BusinessException;
 import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.model.dto.CustomerDTO;
 import com.example.demo.model.entity.Customer;
-import com.example.demo.service.CustomerService;
+import com.example.demo.service.api.CustomerService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +17,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
-
+	
+	private final Logger log = LoggerFactory.getLogger(getClass());
+	
     private final CustomerMapper customerMapper;
 
     public CustomerServiceImpl(CustomerMapper customerMapper) {
@@ -32,7 +37,8 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDTO findById(String id) {
         Customer customer = customerMapper.findById(id);
         if (customer == null) {
-            throw new BusinessException(CustomerEnum.CUSTOMER_NOT_FOUND, "Customer with id " + id + " not found");
+        	log.warn("客户没有找到: {}", id);
+            throw new BusinessException(CustomerEnum.CUSTOMER_NOT_FOUND);
         }
         return CustomerConverter.INSTANCE.entityToDTO(customer);
     }
@@ -43,7 +49,8 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.getId() != null) { // Update
             Customer existingCustomer = customerMapper.findById(customer.getId());
             if (existingCustomer == null) {
-                throw new BusinessException(CustomerEnum.CUSTOMER_NOT_FOUND, "Customer with id " + customer.getId() + " not found");
+            	log.warn("客户没有找到: {}", customer.getId());
+                throw new BusinessException(CustomerEnum.CUSTOMER_NOT_FOUND);
             }
             customerMapper.update(customer);
         } else { // Create
@@ -56,7 +63,8 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteById(String id) {
         Customer existingCustomer = customerMapper.findById(id);
         if (existingCustomer == null) {
-            throw new BusinessException(CustomerEnum.CUSTOMER_NOT_FOUND, "Customer with id " + id + " not found");
+        	log.warn("客户没有找到: {}", id);
+            throw new BusinessException(CustomerEnum.CUSTOMER_NOT_FOUND);
         }
         customerMapper.deleteById(id);
     }

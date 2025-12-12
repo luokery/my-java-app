@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.UserMapper">
+
+	<sql id="Common_Base_Column_List">
+		, REC_STATUS, CRT_TIME, CRT_USER, LST_UPD_TIME, LST_UPD_USER
+	</sql>
+	
+	<sql id="Entity_Base_Column_List">
+		USER_NO, USER_NAME, USER_NICKNAME, USER_PASSWORD, SALT
+	</sql>
+	
+	<sql id="Base_Column_List">
+		<include refid="Entity_Base_Column_List" />
+		<include refid="Common_Base_Column_List" />
+	</sql>
+  
+    <insert id="insert" parameterType="com.example.demo.model.entity.User">
+		INSERT INTO TBL_USER (
+		<include refid="Base_Column_List" />
+		) 
+		VALUES (
+		#{userNo}, #{userName}, #{userNickName}, #{userPassword}, #{salt}
+		, #{recStatus}, #{crtTime}, #{crtUser}, #{lstUpdTime}, #{lstUpdUser}
+		);
+    </insert>
+
+    <delete id="deleteById">
+        DELETE
+        FROM TBL_USER
+        WHERE USER_NO = #{id}
+    </delete>
+    
+    <delete id="delete">
+        DELETE
+        FROM TBL_USER
+         <where>
+        	<include refid="Base_select_where" />
+         </where>
+    </delete>
+    
+  <sql id="update_Base_Column_List">
+		USER_NAME = #{userName}, USER_NICKNAME = #{userNickName}, USER_PASSWORD = #{userPassword}, SALT = #{salt}
+  </sql>
+    <update id="updateAllFieldByNo" parameterType="com.example.demo.model.entity.User">
+        update TBL_USER 
+        set 
+        <include refid="update_Base_Column_List" />
+        , REC_STATUS = #{recStatus}, LST_UPD_TIME = #{lstUpdTime}, LST_UPD_USER = #{lstUpdUser}
+        where USER_NO = #{userNo}
+    </update>
+
+	<!-- 动态更新 -->
+    <update id="updateNotNullByNo" parameterType="com.example.demo.model.entity.User">
+        update TBL_USER 
+        <set>
+        	<if test="userName != null">USER_NAME = #{userName},</if>
+        	<if test="userNickName != null">USER_NICKNAME = #{userNickName},</if>
+        	<if test="userPassword != null">USER_PASSWORD = #{userPassword},</if>
+        	<if test="salt != null">SALT = #{salt},</if>
+        	
+        	<if test="recStatus != null">REC_STATUS = #{recStatus},</if>
+        	<!-- 不允许更新创建时间,创建人 -->
+        	<if test="lstUpdTime != null">LST_UPD_TIME = #{lstUpdTime},</if>
+        	<if test="lstUpdUser != null">LST_UPD_USER = #{lstUpdUser},</if>
+        </set>
+        where USER_NO = #{userNo}
+    </update>
+
+
+	<sql id="Base_select_where">
+	   <if test="userNo != null and userNo != ''">AND USER_NO = #{userNo}</if>
+	   <if test="userName != null and userName != ''">AND USER_NAME = #{userName}</if>
+	   <if test="userNickName != null and userNickName != ''">AND USER_NICKNAME = #{userNickName}</if>
+	   <if test="userPassword != null and userPassword != ''">AND USER_PASSWORD = #{userPassword}</if>
+	   <if test="salt != null and salt != ''">AND SALT = #{salt}</if>
+	     	
+	   <if test="recStatus != null and recStatus != ''">AND REC_STATUS = #{recStatus}</if>
+	   <if test="crtTime != null">AND CRT_TIME = #{crtTime}</if>
+	   <if test="crtUser != null and crtUser != ''">AND CRT_USER = #{crtUser}</if>
+	   <if test="lstUpdTime != null">AND LST_UPD_TIME = #{lstUpdTime}</if>
+	   <if test="lstUpdUser != null and lstUpdUser != ''">AND LST_UPD_USER = #{lstUpdUser}</if>
+	</sql>
+	<select id="findByNo">
+		select * from TBL_USER 
+         <where>
+        	USER_NO = #{userNo}
+         </where>
+	</select>
+    <select id="queryList" parameterType="com.example.demo.model.entity.User">
+        select 
+        <include refid="Base_Column_List" />
+         from TBL_USER 
+         <where>
+        	<include refid="Base_select_where" />
+         </where>
+    </select>
+
+	<sql id="Base_select_page_where">
+		<if test="entity.userNo != null and entity.userNo != ''">AND USER_NO = #{entity.userNo}</if>
+		<!-- -->
+		<if test="entity.userName != null and entity.userName != ''">AND USER_NAME = #{entity.userName}</if>
+		<if test="entity.userNickName != null and entity.userNickName != ''">AND USER_NICKNAME = #{entity.userNickName}</if>
+		<if test="entity.userPassword != null and entity.userPassword != ''">AND USER_PASSWORD = #{entity.userPassword}</if>
+		<if test="entity.salt != null and entity.salt != ''">AND SALT = #{entity.salt}</if>
+		
+		<if test="entity.recStatus != null and entity.recStatus != ''">AND REC_STATUS = #{entity.recStatus}</if>
+		<if test="entity.crtTime != null">AND CRT_TIME = #{entity.crtTime}</if>
+		<if test="entity.crtUser != null and entity.crtUser != ''">AND CRT_USER = #{entity.crtUser}</if>
+		<if test="entity.lstUpdTime != null">AND LST_UPD_TIME = #{entity.lstUpdTime}</if>
+		<if test="entity.lstUpdUser != null and entity.lstUpdUser != ''">AND LST_UPD_USER = #{entity.lstUpdUser}</if>
+	</sql>
+
+	<!-- 分页 -->
+    <select id="queryPageList">
+        select 
+        <include refid="Base_Column_List" />
+         from TBL_USER
+         <where>
+         	<include refid="Base_select_page_where" />
+         </where>
+         limit #{page.offset}, #{page.pageSize}
+    </select>
+    
+    <select id="findCount" resultType="java.lang.Integer">
+        select 
+        	count(1)
+        from TBL_USER
+        <where>
+        	<include refid="Base_select_page_where" />
+        </where>
+    </select>
+
+</mapper>

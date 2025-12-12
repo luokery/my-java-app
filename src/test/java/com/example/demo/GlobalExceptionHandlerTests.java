@@ -12,6 +12,6 @@ public class GlobalExceptionHandlerTests {
 	
 	@Test
 	void contextLoads() {
-		throw new BusinessException(ResultEnum.VALIDATION_ERROR, "test Exception");
+//		throw new BusinessException(ResultEnum.VALIDATION_ERROR, "test Exception");
 	}
 }

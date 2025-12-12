@@ -12,11 +12,11 @@ import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 @Schema(description = "客户实体类")
 public class Customer {
 
-	@Schema(description = "客户ID", example = "1001", required = false, requiredMode = RequiredMode.REQUIRED)
+	@Schema(description = "客户ID", example = "1001", requiredMode = RequiredMode.REQUIRED)
     private String id;
-	@Schema(description = "客户名", example = "coco", required = true, requiredMode = RequiredMode.REQUIRED)
+	@Schema(description = "客户名", example = "coco", requiredMode = RequiredMode.REQUIRED)
     private String username;
-	@Schema(description = "客户昵称", example = "张三, coco", required = true)
+	@Schema(description = "客户昵称", example = "张三, coco")
     private String nickname;
 	@Schema(description = "邮箱", example = "demo@example.com", hidden = true)
     private String email;

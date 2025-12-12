@@ -9,7 +9,15 @@ spring:
 server:
   port: ${PORT:8080}
 mybatis:
+  # 指定要扫描的 Xxxmapper.xml
   mapper-locations: classpath:mapper/*.xml
+  # 通过config-location 可以指定mybatis-config.xml 可以以传统的方式来配置mybatis
+  config-location:
+    type-aliases-package: 
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  
 ## -----------------------   日志配置 配置   -----------------------
 
 # level: TRACE INFO ERROR WARN FATAL OFF

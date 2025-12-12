@@ -6,8 +6,13 @@ import jakarta.validation.groups.Default;
  * A utility interface for defining validation groups.
  */
 public interface Groups {
+	
+	/**
+     * Validation group for QueryPage operations.
+     */
+	interface QueryPage extends Default {}
 
-    /**
+	/**
      * Validation group for create operations.
      */
     interface Create extends Default {}

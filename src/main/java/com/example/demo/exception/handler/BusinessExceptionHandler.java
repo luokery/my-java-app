@@ -22,6 +22,6 @@ public class BusinessExceptionHandler implements ExceptionHandlerPolicyModel<Bus
 
 	@Override
 	public ResponseVO<BusinessException> handler(BusinessException exception) {
-		return Result.build(exception.getResultFace(), null);
+		return Result.build(exception.getCode(), exception.getMessage(), null);
 	}
 }

@@ -1,5 +1,8 @@
 package com.example.demo.exception;
 
+import java.util.Map;
+
+import com.example.demo.cosnst.ResultEnum;
 import com.example.demo.cosnst.ResultFace;
 
 import lombok.Getter;
@@ -16,24 +19,29 @@ public class BusinessException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private final ResultFace resultFace;
-    private final transient Object data; // Optional data payload
+	private Integer code;
 
+	private Object data;
+	
+	public BusinessException(Integer code, String message) {
+		super(message);
+		this.code = code;
+	}
+	
     public BusinessException(ResultFace resultFace) {
-        super(resultFace.message());
-        this.resultFace = resultFace;
-        this.data = null;
+        this(resultFace.code(), resultFace.message());
+    }
+    
+	public BusinessException(ResultEnum resultFace, Object obj) {
+		this(resultFace.code(), resultFace.message());
+		this.data = obj;
+	}
+
+	public Integer getCode() {
+        return code;
     }
 
-    public BusinessException(ResultFace resultFace, String message) {
-        super(message);
-        this.resultFace = resultFace;
-        this.data = null;
-    }
-
-    public BusinessException(ResultFace resultFace, Object data) {
-        super(resultFace.message());
-        this.resultFace = resultFace;
-        this.data = data;
+    public void setCode(Integer code) {
+        this.code = code;
     }
 }

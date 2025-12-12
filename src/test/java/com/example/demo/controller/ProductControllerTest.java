@@ -7,7 +7,6 @@ import com.example.demo.exception.ErrorCode;
 import com.example.demo.model.dto.ProductDTO;
 import com.example.demo.service.api.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.mybatis.spring.boot.autoconfigure.MybatisLanguageDriverAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;

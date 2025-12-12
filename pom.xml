@@ -15,8 +15,18 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>21</java.version>
+		<maven.compiler.release>21</maven.compiler.release>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+		
+		<!-- 测试 7.1.0 7.9.0 7.10.2-->
+		<testng.version>7.10.2</testng.version>
+		<reportng.version>1.1.4</reportng.version>
+		<testng.xmlFileName>src/test/resources/test/testng-suite.xml</testng.xmlFileName>
+		<testng.xmlFileUtilSuite>src/test/resources/test/util-suite.xml</testng.xmlFileUtilSuite>
+
+		<commons-beanutil.version>1.9.4</commons-beanutil.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -78,11 +88,42 @@
 	        <artifactId>mapstruct-processor</artifactId>
 	        <version>${org.mapstruct.version}</version>
 	    </dependency>
+	    <!-- -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+		<dependency>
+	        <groupId>org.testng</groupId>
+	        <artifactId>testng</artifactId>
+	        <version>${testng.version}</version>
+	        <scope>test</scope>
+    	</dependency>
+		<!-- 依赖reportNg 关联testNg -->
+		<dependency>
+			<groupId>org.uncommons</groupId>
+			<artifactId>reportng</artifactId>
+			<version>${reportng.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.testng</groupId>
+					<artifactId>testng</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>4.2.3</version>
+		</dependency>
+		
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
@@ -112,6 +153,29 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.16</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>${commons-beanutil.version}</version>
+		</dependency>
+		
+    <!-- AspectJ(用于字节码增强)
+    <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>1.9.2</version>
+    </dependency>-->
+			       <dependency>
+			          <groupId>org.apache.maven.doxia</groupId>
+			          <artifactId>doxia-site-renderer</artifactId>
+			          <version>2.0.0</version>
+			       </dependency>
 	</dependencies>
 
 	<build>
@@ -119,10 +183,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <release>${maven.compiler.release}</release>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
@@ -141,6 +206,47 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-surefire-plugin</artifactId>
+	            <configuration>
+	                <skipTests>false</skipTests>
+	                <forkCount>1C</forkCount><!-- 选项指定在测试过程中 JVM fork 的数量。多 JVM 并行可以提升测试执行的性能，特别适合在多核机器上运行测试。机器的 CPU 核心数, 2C为启动 2 个 JVM 实例，来并行执行测试,控制并行 fork 的 JVM 数量，可设为数字或 "C * N" 形式（C=核心数倍数）-->
+					<reuseForks>true</reuseForks><!-- 是否重用 JVM 实例, 控制测试过程中是否重用已经 fork 出来的 JVM 实例。该配置可以避免每次测试都启动新的 JVM，从而减少开销。 -->
+	                <argLine>
+	                    -Dfile.encoding=${project.build.sourceEncoding}
+	                    <!-- TestNG 需要 AspectJ agent -->
+	                    -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+	                </argLine>
+			        <properties>
+			            <property>
+			                <name>usedefaultlisteners</name>
+			                <value>false</value>
+			            </property>
+			            <property>
+			                <name>listener</name>
+			                <value>org.uncommons.reportng.HTMLReporter,org.uncommons.reportng.JUnitXMLReporter</value>
+			            </property>
+			        </properties>
+	                <systemProperties>
+	                    <property>
+	                        <name>allure.results.directory</name>
+	                        <value>${project.build.directory}/allure-results</value>
+	                    </property>
+	                </systemProperties>
+			        <systemPropertyVariables>
+			            <org.uncommons.reportng.escape-output>false</org.uncommons.reportng.escape-output>
+			            <org.uncommons.reportng.reports-dir>${project.build.directory}/reports</org.uncommons.reportng.reports-dir> <!-- 指定报告的输出目录 -->
+			        </systemPropertyVariables>
+					<suiteXmlFiles>
+						<suiteXmlFile>src/test/resources/testcase/dao/user-dao.xml</suiteXmlFile>
+					</suiteXmlFiles>
+					<workingDirectory>target/</workingDirectory>
+	            </configuration>
+			    <dependencies>
+			    </dependencies>
+	        </plugin>
 		</plugins>
 	</build>
 
