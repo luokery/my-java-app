@@ -2,7 +2,7 @@ package com.example.demo.aspect;
 
 public interface IRecStatusAspect {
 	
-	public int recStatus();
+	public Integer recStatus();
 	
-	public void recStatus(int recStatus);
+	public void recStatus(Integer recStatus);
 }

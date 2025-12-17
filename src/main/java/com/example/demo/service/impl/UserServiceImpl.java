@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.converter.UserConverter;
 import com.example.demo.cosnst.UserEnum;
+import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.UserException;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.model.dto.PageDTO;
@@ -24,7 +26,7 @@ import com.example.demo.model.entity.User;
 import com.example.demo.service.api.UserService;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService<UserDTO, UserDTO> {
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 	
@@ -45,8 +47,11 @@ public class UserServiceImpl implements UserService {
 			throw new UserException(UserEnum.PARAM_DATA_NOT_NULL);
 		}
 		
-//		throw new UserException(UserEnum.BUSS_DATA_USER_NAME_EXISTENT);// FIXME 使用数据库唯一键, 抛出异常 成未完成
-
+        User existing = userMapper.findByNo(DTO.getUserNo());
+        if (existing != null) {
+            throw new BusinessException(UserEnum.USER_already_exists);
+        }
+        
 		// 拷贝数据
 		User entityPO = UserConverter.INSTANCE.toEntity(DTO);
 
@@ -62,18 +67,17 @@ public class UserServiceImpl implements UserService {
 		
 		entityPO.setRecStatus("0001");
 		entityPO.setCrtTime(curDate);
-//			entityPO.setCrtUser(crtUser);// FIXME 创建用户 成未完成
+		entityPO.setCrtUser("crtUser");// FIXME 创建用户 成未完成
 		entityPO.setLstUpdTime(curDate);
-//			entityPO.setLstUpdUser(lstUpdUser);// FIXME 最后更新用户 成未完成
+		entityPO.setLstUpdUser("lstUpdUser");// FIXME 最后更新用户 成未完成
 		
 		userMapper.insert(entityPO);
 		
-		DTO.setUserNo(entityPO.getUserNo());
-		return DTO;
+		return UserConverter.INSTANCE.entityToDTO(entityPO);
 	}
 
 	@Override
-	public int delete(UserDTO DTO) {
+	public UserDTO delete(UserDTO DTO) {
 
 		// 增加用户校验规则: 数据是否存在
 		User entityDb = userMapper.findByNo(DTO.getUserNo());
@@ -93,7 +97,9 @@ public class UserServiceImpl implements UserService {
 		entityPO.setCrtUser(null);
 		entityPO.setLstUpdTime(curDate);
 //		entityPO.setLstUpdUser(lstUpdUser); // FIXME: 用户功能未实现
-		return userMapper.delete(entityPO); // FIXME: 软逻辑删除, 修改 recstatus而不是delete
+		userMapper.delete(entityPO);// FIXME: 软逻辑删除, 修改 recstatus而不是delete
+		
+		return UserConverter.INSTANCE.entityToDTO(entityPO);
 	}
 
 	@Override
@@ -101,6 +107,7 @@ public class UserServiceImpl implements UserService {
 	public int deleteBatch(String[] ids) {
 		
 		SqlSession sqlSession = null;
+		int resultNum = 0;
 		try {
 			
 			sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
@@ -111,11 +118,12 @@ public class UserServiceImpl implements UserService {
 			// 批量插入
 			int batchCount = 1000;//提交数量,到达这个数量就提交
 			for (int index = 0; index < ids.length; index++) {
+				resultNum ++;
 				String obj = ids[index];
 				mapper.deleteById(obj);
 			    if(index != 0 && index%batchCount == 0){
 			        sqlSession.commit();
-			    }                    
+			    }
 			}
 		    // 执行批量操作
 		    sqlSession.commit();
@@ -131,11 +139,11 @@ public class UserServiceImpl implements UserService {
 				sqlSession.close();
 			}
 		}
-		return 0; // FIXME: 批量删除中有失败, 如何返回. 全部回滚 还是部分成功
+		return resultNum;
 	}
 
 	@Override
-	public int updateAllField(UserDTO DTO) {
+	public UserDTO updateAllField(UserDTO DTO) {
 		
 		// 增加用户校验规则: 数据是否存在
 		User entityDb = userMapper.findByNo(DTO.getUserNo());
@@ -153,11 +161,13 @@ public class UserServiceImpl implements UserService {
 //			userPO.setCrtUser(crtUser);
 		entityPO.setLstUpdTime(curDate);
 //			userPO.setLstUpdUser(lstUpdUser);
-		return userMapper.updateAllFieldByNo(entityPO);
+		userMapper.updateAllFieldByNo(entityPO);
+		
+		return UserConverter.INSTANCE.entityToDTO(entityPO);
 	}
 
 	@Override
-	public int updateNotNull(UserDTO DTO) {
+	public UserDTO updateNotNull(UserDTO DTO) {
 		
 		// 增加用户校验规则: 数据是否存在
 		User entityDb = userMapper.findByNo(DTO.getUserNo());
@@ -175,7 +185,9 @@ public class UserServiceImpl implements UserService {
 //			userPO.setCrtUser(crtUser);
 		entityPO.setLstUpdTime(curDate);
 //			userPO.setLstUpdUser(lstUpdUser);
-		return userMapper.updateNotNullByNo(entityPO);
+		userMapper.updateNotNullByNo(entityPO);
+		
+		return UserConverter.INSTANCE.entityToDTO(entityPO);
 	}
 	
 	@Override
@@ -185,7 +197,10 @@ public class UserServiceImpl implements UserService {
 		User entityPO = UserConverter.INSTANCE.toEntity(DTO);
 
 		User entityDb = userMapper.findByNo(entityPO.getUserNo());
-		
+        if (entityDb == null) {
+        	log.warn("数据没有找到: {}", entityPO.getUserNo());
+            throw new BusinessException(UserEnum.BUSS_DATA_NON_EXISTENT);
+        }
 		return UserConverter.INSTANCE.entityToDTO(entityDb);
 	}
 
@@ -194,40 +209,46 @@ public class UserServiceImpl implements UserService {
 
 		// 拷贝数据
 		User entityPO = UserConverter.INSTANCE.toEntity(DTO);
-
+		
 		List<User> entityPoList = userMapper.queryList(entityPO);
 		
 		return UserConverter.INSTANCE.entityToDTO(entityPoList);
 	}
 
 	@Override
-	public PageDTO<UserDTO> queryPageList(PageDTO<UserDTO> pageDTO, UserDTO paramDTO) {
-		
+	public PageDTO<UserDTO, UserDTO> queryPageList(PageDTO<UserDTO, UserDTO> pageDTO) {
 
 		// 拷贝数据: 查询参数拷贝
-		User entityParam = UserConverter.INSTANCE.toEntity(paramDTO);
+		User entityParam = UserConverter.INSTANCE.toEntity(pageDTO.getParamData());
 
 		Integer nCount = userMapper.findCount(entityParam);
 
 		// 没查到数据
 		if (nCount <= 0) {
+			pageDTO.setResultData(new ArrayList<UserDTO>(0));
 			return pageDTO;
 		}
-		pageDTO.setRowCount(nCount);
+		
 		int pageNum = pageDTO.getPageNum();
 		int pageSize = pageDTO.getPageSize();
-		
-		
+		// 设置行总数
+		pageDTO.setRowCount(nCount);
+		// 计算出总页数
+		int pageCount = (nCount + pageSize - 1) / pageSize;
+		pageDTO.setPageCount(pageCount);
 		// 当前分页没有数据
 		if ((nCount + pageSize) - (pageNum * pageSize) <= 0) {
 			throw new UserException(UserEnum.BUSS_DATA_NON_EXISTENT_PAGE);
 		}
-
+		
+		// 设置分页点: Offset分页点与分页数据分离
 		PageEntity pageEntity = new PageEntity(pageNum, pageSize);
-
+		pageEntity.setOffset((pageNum-1) * pageSize);
+		
 		List<User> pageListDb = userMapper.queryPageList(pageEntity, entityParam);
+		// 设置结果数据
 		List<UserDTO> pageListDTO = UserConverter.INSTANCE.entityToDTO(pageListDb);
-		pageDTO.setPageDataList(pageListDTO);
+		pageDTO.setResultData(pageListDTO);
 		return pageDTO;
 	}
 }

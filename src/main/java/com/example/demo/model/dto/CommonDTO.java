@@ -46,15 +46,15 @@ public class CommonDTO implements IRecStatusAspect {
 	/**
 	 * 记录状态
 	 */
-	private int recStatus;
+	private Integer recStatus;
 
 	@Override
-	public int recStatus() {
+	public Integer recStatus() {
 		return recStatus;
 	}
 
 	@Override
-	public void recStatus(int recStatus) {
+	public void recStatus(Integer recStatus) {
 		this.recStatus = recStatus;
 	}
 }

@@ -15,7 +15,7 @@ mybatis:
   config-location:
     type-aliases-package: 
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
   
 ## -----------------------   日志配置 配置   -----------------------
@@ -113,14 +113,26 @@ spring:
 springdoc:
   title: 测试项目
   api-docs:
+    # 开启api文档访问
     enabled: true
+    # 设置api文档访问路径
     path: /v3/api-docs
+  group-configs:
+    - group: "用户服务"
+      paths-to-match: "/api/users/**"
+    - group: "产品服务"
+      paths-to-match: "/api/products/**"
+    - group: "客户服务"
+      paths-to-match: "/api/customers/**"
   swagger-ui:
     url: "/v3/api-docs"
+    # swagger ui访问路径
     path: /swagger-ui.html
     operationsSorter: method
+    #显示请求持续时间
+    display-request-duration: true
     tagsSorter: alpha
-  packages-to-scan: # 指定扫描的Controller包(可选)
+  packages-to-scan: # 指定扫描的包(可选)
     - com.example.demo.controller
   # 自定义OpenAPI文档信息
   openapi:

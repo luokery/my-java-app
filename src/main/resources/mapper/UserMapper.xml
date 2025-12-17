@@ -44,9 +44,17 @@
   </sql>
     <update id="updateAllFieldByNo" parameterType="com.example.demo.model.entity.User">
         update TBL_USER 
-        set 
-        <include refid="update_Base_Column_List" />
-        , REC_STATUS = #{recStatus}, LST_UPD_TIME = #{lstUpdTime}, LST_UPD_USER = #{lstUpdUser}
+        <set>
+<if test="userName != null or userName == null ">USER_NAME = #{userName},</if>
+<if test="userNickName != null or userNickName == null ">USER_NICKNAME = #{userNickName},</if>
+<if test="userPassword != null or userPassword == null ">USER_PASSWORD = #{userPassword},</if>
+<if test="salt != null or salt == null ">SALT = #{salt},</if>
+        
+        	<if test="recStatus != null">REC_STATUS = #{recStatus},</if>
+        	<!-- 不允许更新创建时间,创建人 -->
+        	<if test="lstUpdTime != null">LST_UPD_TIME = #{lstUpdTime},</if>
+        	<if test="lstUpdUser != null">LST_UPD_USER = #{lstUpdUser},</if>
+        </set>
         where USER_NO = #{userNo}
     </update>
 

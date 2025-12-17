@@ -22,7 +22,8 @@ public enum ResultEnum implements ResultFace {
     
     SPRING_MASSAGE_ERROR(9 , "请检查参数或者请求消息格式."),
     SPRING_RESOURCE_NOT_FOUND(9 , "资源未找到."),
-    PARAM_DATA_NOT_NULL(9 , "添加失败: 传入的实体为空"),
+    PARAM_DATA_NOT_NULL(9 , "添加失败: 传入的实体为空"), 
+    SQL_Integrity_Constraint_Violation_ERROR(9 , "错误: 请检查违反完整性约束."),
     ;
 
     private Integer code;

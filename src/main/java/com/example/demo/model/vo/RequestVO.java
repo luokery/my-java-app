@@ -2,36 +2,40 @@ package com.example.demo.model.vo;
 
 import java.util.Objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-
+@Schema(title = "请求VO", description = "请求VO")
 public class RequestVO<T> {
 	
 	/**
 	 * 流水号: 请求发送的流水号, 与返回的流水号对应
 	 */
+	@Schema(title = "流水号", description = "请求发送的流水号, 与返回的流水号对应")
 	private String serialNumber;
 	
 	/**
 	 * 令牌: 身份令牌
 	 */
+	@Schema(title = "令牌", description = "身份令牌")
 	private String token;
 	
 	/**
 	 * 来源: 公司, 应用(配合密钥处理)
 	 */
+	@Schema(title = "来源", description = "公司, 应用(配合密钥处理)")
 	private String source;
 	
 	/**
-	 * 请求版本: 匹配服务版本
+	 * 版本: 匹配服务版本
 	 */
+	@Schema(title = "版本", description = "请求匹配服务版本")
 	private String version;
 	
 	/**
 	 * 请求的数据: 对应的DTO
 	 */
-	// @NotEmpty(message = "请求数据不能为空") // 不能为null, 集合size不能为0
 	@Valid
 	@NotNull(message = "请求数据不能为空")
 	private T data;
@@ -95,7 +99,7 @@ public class RequestVO<T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RequestVO other = (RequestVO) obj;
+		RequestVO<?> other = (RequestVO<?>) obj;
 		return Objects.equals(data, other.data) && Objects.equals(serialNumber, other.serialNumber)
 				&& Objects.equals(source, other.source) && Objects.equals(token, other.token)
 				&& Objects.equals(version, other.version);

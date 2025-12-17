@@ -39,7 +39,8 @@ public enum UserEnum implements ResultFace {
     BUSS_DATA_USER_NAME_EXISTENT(154, "错误: 用户名存在."),
     
     
-    PARAM_DATA_NOT_NULL(9 , "添加失败: 传入的实体为空"),
+    PARAM_DATA_NOT_NULL(9 , "添加失败: 传入的实体为空"), 
+    USER_already_exists(9 , "添加失败: 用户已经存在"),
     ;
 
     private Integer code;

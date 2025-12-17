@@ -2,6 +2,9 @@ package com.example.demo.converter;
 
 import java.util.List;
 
+import com.example.demo.model.dto.PageDTO;
+import com.example.demo.model.vo.PageVO;
+
 
 public interface IMapstruct<V, D, E> {
 	/**
@@ -55,4 +58,18 @@ public interface IMapstruct<V, D, E> {
 	 * @return
 	 */
     List<D> entityToDTO(List<E> entity);
+    
+    /**
+     * 分页DTO转换为分页VO
+     * @param pageDTO
+     * @return
+     */
+    PageVO<V, V> toPageVO(PageDTO<D, D> pageDTO);
+    
+    /**
+     * 分页VO转换为分页DTO
+     * @param pageVO
+     * @return
+     */
+    PageDTO<D, D> toPageDTO(PageVO<V, V> pageVO);
 }

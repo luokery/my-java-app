@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.model.dto.PageDTO;
 import com.example.demo.model.dto.UserDTO;
 
-public interface BaseService<T> {
+public interface BaseService<T, E> {
 	
 	/**
 	 * 添加
@@ -20,7 +20,8 @@ public interface BaseService<T> {
 	 * 删除
 	 * @param DTO
 	 */
-	int delete(T DTO);
+	@Transactional
+	T delete(T DTO);
 	
 	/**
 	 * 批量删除
@@ -34,13 +35,14 @@ public interface BaseService<T> {
 	 * @param DTO
 	 */
 	@Transactional
-	int updateAllField(UserDTO DTO);
+	T updateAllField(UserDTO DTO);
 	
 	/**
 	 * 更新: 更新所有非空字段
 	 * @param DTO
 	 */
-	int updateNotNull(UserDTO DTO);
+	@Transactional
+	T updateNotNull(UserDTO DTO);
 	
 	/**
 	 * 查询
@@ -61,6 +63,6 @@ public interface BaseService<T> {
 	 * @param pageDto
 	 * @return
 	 */
-	PageDTO<T> queryPageList(PageDTO<T> pageDTO, T paramDTO);
+	PageDTO<T, E> queryPageList(PageDTO<T, E> pageDTO);
 
 }

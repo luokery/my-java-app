@@ -1,24 +1,24 @@
-package com.example.demo.model.dto;
+package com.example.demo.model.vo;
 
 import java.util.List;
+import java.util.Objects;
 
-import com.example.demo.model.IPage;
-
-/****************************************************
+/**
  * <p>PageDTO.java(泛型分页DTO类)</p>
  * <a href="http://commons.apache.org/proper/commons-lang/分页">分页设计使用方法</a>
  * for a more comprehensive suite of {@code PageDTO} utilities.
- * @param <T>
+ * 
+ * @param <T> 结果VO
+ * @param <E> 参数VO
  * 
  * @Version 1.0
  * @since 1.0
  * @Date 2019-11-17 12:12:12
- * @Author 
- * @Mail 
- * 
+ * @Author lj
+ * @Mail lj@163.com
+ *
  */
-public class PageDTO<T, E> implements IPage {
-	
+public class PageVO<T, E> {
 	/**
 	 * 页面号
 	 * 查询的页号
@@ -40,9 +40,6 @@ public class PageDTO<T, E> implements IPage {
 	 */
 	private int pageCount = 0;
 	
-	/** 分页点 */
-	private int offset = 0;
-	
 	/**
 	 *  参数数据
 	 */
@@ -52,29 +49,6 @@ public class PageDTO<T, E> implements IPage {
 	 *  结果记录集
 	 */
 	private List<T> resultData = null;
-	
-	public PageDTO() {
-	}
-	
-	public PageDTO( int pageNum, int pageSize) {
-		this.pageNum = pageNum;
-		this.pageSize = pageSize;
-	}
-	
-	public PageDTO( int pageNum, int pageSize, int rowCount, List<T> resultData) {
-		this(pageNum, pageSize);
-		this.resultData = resultData;
-		// 计算总行数
-		this.rowCount = rowCount;
-	}
-
-	public List<T> getResultData() {
-		return resultData;
-	}
-
-	public void setResultData(List<T> resultData) {
-		this.resultData = resultData;
-	}
 
 	public int getPageNum() {
 		return pageNum;
@@ -108,19 +82,44 @@ public class PageDTO<T, E> implements IPage {
 		this.pageCount = pageCount;
 	}
 
-	public int getOffset() {
-		return offset;
-	}
-
-	public void setOffset(int offset) {
-		this.offset = offset;
-	}
-
 	public E getParamData() {
 		return paramData;
 	}
 
 	public void setParamData(E paramData) {
 		this.paramData = paramData;
+	}
+
+	public List<T> getResultData() {
+		return resultData;
+	}
+
+	public void setResultData(List<T> resultData) {
+		this.resultData = resultData;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(pageCount, pageNum, pageSize, paramData, resultData, rowCount);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PageVO<?, ?> other = (PageVO<?, ?>) obj;
+		return pageCount == other.pageCount && pageNum == other.pageNum && pageSize == other.pageSize
+				&& Objects.equals(paramData, other.paramData) && Objects.equals(resultData, other.resultData)
+				&& rowCount == other.rowCount;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("PageVO [pageNum=%s, pageSize=%s, rowCount=%s, pageCount=%s, paramData=%s, resultData=%s]",
+				pageNum, pageSize, rowCount, pageCount, paramData, resultData);
 	}
 }

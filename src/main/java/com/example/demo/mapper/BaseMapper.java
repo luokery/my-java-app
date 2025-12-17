@@ -64,8 +64,8 @@ public interface BaseMapper<T> {
 	/**
 	 * 查询:查询分页列表
 	 * 
-	 * @param page
-	 * @param entity
+	 * @param page		分页数据: 页面号, 分页大小
+	 * @param entity	查询数据: 查询条件
 	 * @return
 	 */
 	 List<T> queryPageList(@Param("page") PageEntity page, @Param("entity") T entity);

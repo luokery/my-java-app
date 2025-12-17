@@ -4,27 +4,32 @@ import java.util.Objects;
 
 import com.example.demo.validation.Groups;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public class PageParamVO {
+public class PageParamVO<T> {
 	
 	/**
 	 * 页面号
 	 * 查询的页号
 	 */
 	@NotNull(groups = {Groups.Query.class, Groups.QueryPage.class}, message = "页面号不能为空")
-	@Min(value=1, groups = {Groups.Query.class, Groups.QueryPage.class}, message = "页面号不能:最小不能小于1")
+	@Min(value=1, groups = {Groups.Query.class, Groups.QueryPage.class}, message = "页面号:最小不能小于1")
 	private int pageNum = 0;
 	
 	/**
 	 * 页大小
 	 */
 	@NotNull(groups = {Groups.Query.class, Groups.QueryPage.class}, message = "页大小不能为空")
-	@Min(value=1, groups = {Groups.Query.class, Groups.QueryPage.class}, message = "页大小不能:最小不能小于1")
-	@Max(value=1000, groups = {Groups.Query.class, Groups.QueryPage.class}, message = "页大小不能:最大不能大于1000")
+	@Min(value=1, groups = {Groups.Query.class, Groups.QueryPage.class}, message = "页大小:最小不能小于1")
+	@Max(value=1000, groups = {Groups.Query.class, Groups.QueryPage.class}, message = "页大小:最大不能大于1000")
 	private int pageSize = 0;
+	
+	@Valid
+	@NotNull(message = "请求数据不能为空")
+	private T paramData;
 	
 	public int getPageNum() {
 		return pageNum;
@@ -46,13 +51,15 @@ public class PageParamVO {
 	public void setLimit(int limit) {
 		this.pageSize = limit;
 	}
-	@Override
-	public String toString() {
-		return String.format("PageParamVO [pageNum=%s, pageSize=%s]", pageNum, pageSize);
+	public T getParamData() {
+		return paramData;
+	}
+	public void setParamData(T paramData) {
+		this.paramData = paramData;
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(pageNum, pageSize);
+		return Objects.hash(pageNum, pageSize, paramData);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -62,7 +69,11 @@ public class PageParamVO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PageParamVO other = (PageParamVO) obj;
-		return pageNum == other.pageNum && pageSize == other.pageSize;
+		PageParamVO<?> other = (PageParamVO<?>) obj;
+		return pageNum == other.pageNum && pageSize == other.pageSize && Objects.equals(paramData, other.paramData);
+	}
+	@Override
+	public String toString() {
+		return String.format("PageParamVO [pageNum=%s, pageSize=%s, paramVO=%s]", pageNum, pageSize, paramData);
 	}
 }
