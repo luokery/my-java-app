@@ -1,0 +1,19 @@
+spring:
+  config:
+    activate:
+      on-profile:
+        - prod
+    import:
+      - application-prod-datasource.yml
+      - application-prod-springdoc.yml
+server:
+  port: ${PORT:8081}
+
+## -----------------------   开发测试热更新 配置   -----------------------
+---
+spring:
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false

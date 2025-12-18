@@ -1,0 +1,20 @@
+# springboot 2.4 后config变更. 参考:https://spring.io/blog/2020/08/14/config-file-processing-in-spring-boot-2-4
+spring:
+  config:
+    activate:
+      on-profile:
+        - local
+    import:
+      - application-local-datasource.yml
+      - application-local-springdoc.yml
+server:
+  port: ${PORT:8080}
+  
+## -----------------------   开发测试热更新 配置   -----------------------
+---
+spring:
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true

@@ -1,0 +1,19 @@
+spring:
+  config:
+    activate:
+      on-profile:
+        - test
+    import: # 
+      - application-test-datasource.yml
+      - application-test-springdoc.yml
+server:
+  port: ${PORT:8081}
+  
+## -----------------------   开发测试热更新 配置   -----------------------
+---
+spring:
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true

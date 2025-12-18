@@ -7,7 +7,7 @@ import java.text.MessageFormat;
  * 
  *      200                         请求成功
  *	    400 bad request	    		常用在参数校验
- *	    401 unauthorized			未经验证的用户，常见于未登录。如果经过验证后依然没权限，应该 403（即 authentication 和 authorization 的区别）。
+ *	    401 unauthorized			未经验证的用户，常见于未登录。如果经过验证后依然没权限，应该 403(即 authentication 和 authorization 的区别)。
  *	    403 forbidden	    		无权限
  *	    404 not found	    		资源不存在
  *	    500 internal server error	非业务类异常

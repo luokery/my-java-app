@@ -212,7 +212,7 @@
 	            <artifactId>maven-surefire-plugin</artifactId>
 	            <configuration>
 	                <skipTests>false</skipTests>
-	                <forkCount>1C</forkCount><!-- 选项指定在测试过程中 JVM fork 的数量。多 JVM 并行可以提升测试执行的性能，特别适合在多核机器上运行测试。机器的 CPU 核心数, 2C为启动 2 个 JVM 实例，来并行执行测试,控制并行 fork 的 JVM 数量，可设为数字或 "C * N" 形式（C=核心数倍数）-->
+	                <forkCount>1C</forkCount><!-- 选项指定在测试过程中 JVM fork 的数量。多 JVM 并行可以提升测试执行的性能，特别适合在多核机器上运行测试。机器的 CPU 核心数, 2C为启动 2 个 JVM 实例，来并行执行测试,控制并行 fork 的 JVM 数量，可设为数字或 "C * N" 形式(C=核心数倍数)-->
 					<reuseForks>true</reuseForks><!-- 是否重用 JVM 实例, 控制测试过程中是否重用已经 fork 出来的 JVM 实例。该配置可以避免每次测试都启动新的 JVM，从而减少开销。 -->
 	                <argLine>
 	                    -Dfile.encoding=${project.build.sourceEncoding}
