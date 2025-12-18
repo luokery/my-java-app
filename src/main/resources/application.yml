@@ -1,9 +1,9 @@
 # 环境切换: local dev test prod
 # 当前项目maven激活环境，例如：local/dev/test，对应pom.xml中profile设置值
-#spring.profiles.active=test '@profileActive@'
+#spring.profiles.active=test '@spring.profiles.active@' 其中@spring.profiles.active@与pom中profiles的变量对应
 spring: 
   profiles: 
-    active: local
+    active: '@spring.profiles.active@'
     # 叠加激活新的profile: 原来分割配置文件(如:redis, datasource), 公共的配置放到properties里.
     #include: mvc,data,config
   application:
@@ -23,16 +23,20 @@ server:
   port: ${PORT:8080}
 ---
 spring:
-  # 消息编码格式
+  # 国际化配置
   messages:
-    # 国际化资源文件路径如果不配置为(ValidationMessages.properties)
+    # 默认语言
+    default-locale: zh_cn
+    # I18n是存放多语言文件目录，messages是文件前缀.如果不配置为(ValidationMessages.properties)
     basename: i18n/messages
-    # 消息编码格式
+    # 指定国际化文件编码格式
     encoding: UTF-8
-    # 文件的缓存失效时间
+    # 设置国际化消息缓存有效时间，单位是秒
     cache-duration: 3600
-    # 默认查找当前系统对应的资源文件, 最终找到默认的:messages.properties
+    # 找不到与用户区域设置匹配的消息时，将退回系统默认区域设置. 最终找到默认的:messages.properties
     fallback-to-system-locale: true
+    # 当找不到对应的消息键时，决定是否使用键值本身作为消息返回
+    use-code-as-default-message: true
 ## -----------------------   orm 配置   -----------------------
 mybatis:
   # 指定要扫描的 Xxxmapper.xml

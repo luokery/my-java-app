@@ -25,7 +25,10 @@
 		<reportng.version>1.1.4</reportng.version>
 		<testng.xmlFileName>src/test/resources/test/testng-suite.xml</testng.xmlFileName>
 		<testng.xmlFileUtilSuite>src/test/resources/test/util-suite.xml</testng.xmlFileUtilSuite>
-
+        <!-- 缓存 -->
+        <redisson.version>3.37.0</redisson.version>
+        <caffeine.version>3.1.8</caffeine.version>
+        <!-- 工具类 -->
 		<commons-beanutil.version>1.9.4</commons-beanutil.version>
 	</properties>
 	<dependencies>
@@ -178,7 +181,43 @@
 			       </dependency>
 	</dependencies>
 
+	<!-- 多环境打包 -->
+	<profiles>
+		<profile>
+			<id>local</id>
+			<properties>
+				<spring.profiles.active>local</spring.profiles.active>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+				<spring.profiles.active>test</spring.profiles.active>
+				<maven.test.skip>false</maven.test.skip>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<spring.profiles.active>prod</spring.profiles.active>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+		</profile>
+	</profiles>
+	
 	<build>
+		<finalName>${project.artifactId}-${project.version}-${spring.profiles.active}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -244,10 +283,33 @@
 					</suiteXmlFiles>
 					<workingDirectory>target/</workingDirectory>
 	            </configuration>
-			    <dependencies>
-			    </dependencies>
 	        </plugin>
 		</plugins>
+		<!-- 项目 resources 概况 -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<!-- 
+					<include>*.*</include>-->
+					<!-- -->
+					<include>application.yml</include>
+					<include>/config/application-${spring.profiles.active}*</include>
+					<include>log4j2-spring.xml</include>
+				</includes>
+				<!-- maven 管理文件中的变量替换 -->
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>banner.txt</include>
+					<include>/i18n/*</include>
+					<include>/mapper/*</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
 	</build>
 
 </project>
