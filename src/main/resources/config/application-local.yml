@@ -18,3 +18,4 @@ spring:
       enabled: true
     livereload:
       enabled: true
+      add-properties: true

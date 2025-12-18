@@ -8,6 +8,7 @@ spring:
     #include: mvc,data,config
   application:
     name: demo
+    version: 0.0.1-beta
     detail: this is demo web api project.
   banner:
     charset: UTF-8
@@ -17,9 +18,21 @@ spring:
       enabled: false
     livereload:
       enabled: false
+    add-properties: false
 server:
   port: ${PORT:8080}
-  
+---
+spring:
+  # 消息编码格式
+  messages:
+    # 国际化资源文件路径如果不配置为(ValidationMessages.properties)
+    basename: i18n/messages
+    # 消息编码格式
+    encoding: UTF-8
+    # 文件的缓存失效时间
+    cache-duration: 3600
+    # 默认查找当前系统对应的资源文件, 最终找到默认的:messages.properties
+    fallback-to-system-locale: true
 ## -----------------------   orm 配置   -----------------------
 mybatis:
   # 指定要扫描的 Xxxmapper.xml
@@ -36,6 +49,15 @@ mybatis:
 # level: TRACE INFO ERROR WARN FATAL OFF
 logging:
   config: classpath:log4j2-spring.xml
+  
+## -----------------------   jackson 配置   -----------------------
+---
+spring:
+  jackson:
+    # 日期格式化
+    date-format: yyyy-MM-dd HH:mm:ss
+    # 而Jackson框架默认的时区GMT(相对于中国是少了8小时)
+    time-zone: GMT+8
 ## -----------------------   spring datasource 配置   -----------------------
 ---
 spring:
@@ -61,10 +83,12 @@ spring:
       maxActive: 20
       # 配置获取连接等待超时的时间
       maxWait: 60000
-      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      # 配置间隔多久才进行一次检测, 检测需要关闭的空闲连接, 单位是毫秒
       timeBetweenEvictionRunsMillis: 60000
-      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      # 配置一个连接在池中最小生存的时间, 单位是毫秒
       minEvictableIdleTimeMillis: 300000
+      # 配置一个连接在池中最大生存的时间, 单位是毫秒
+      maxEvictableIdleTimeMillis: 900000
       #用来检测连接是否有效的sql
       validationQuery: SELECT 1
       #申请连接的时候检测，建议配置为true，不影响性能，并且保证安全性
@@ -121,7 +145,7 @@ spring:
           config:
             delete-allow: true
             drop-table-allow: false
-
+            multi-statement-allow: false
 --- # springdoc 配置
 springdoc:
   title: 测试项目
