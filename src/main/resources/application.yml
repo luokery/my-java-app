@@ -12,7 +12,7 @@ spring:
     detail: this is demo web api project.
   banner:
     charset: UTF-8
-    location: classpath:config/banner.txt
+    location: classpath:banner.txt
   devtools:
     restart:
       enabled: false
@@ -20,7 +20,15 @@ spring:
       enabled: false
     add-properties: false
 server:
+  # 类似http://127.0.0.1这样的格式，这里仅做一个记录
+  domain: http://127.0.0.1
   port: ${PORT:8080}
+  servlet:
+    # 项目基础URI
+    context-path: /
+  # 开启Http2，使其能够进行多路复用
+  http2:
+    enabled: true
 ---
 spring:
   # 国际化配置
@@ -87,6 +95,12 @@ spring:
       maxActive: 20
       # 配置获取连接等待超时的时间
       maxWait: 60000
+      # 配置连接超时时间
+      connect-timeout: 30000
+      # 此属性控制从池返回的连接的默认自动提交行为，默认值：true
+      default-auto-commit: true
+      # 配置网络超时时间
+      socket-timeout: 60000
       # 配置间隔多久才进行一次检测, 检测需要关闭的空闲连接, 单位是毫秒
       timeBetweenEvictionRunsMillis: 60000
       # 配置一个连接在池中最小生存的时间, 单位是毫秒
@@ -158,7 +172,12 @@ springdoc:
     enabled: false
     # 设置api文档访问路径
     path: /v3/api-docs
+    version: openapi_3_1
   group-configs:
+    - group: "all service"
+      paths-to-match: "/**"
+      packages-to-scan:
+        - com.example.demo.controller
     - group: "用户服务"
       paths-to-match: "/api/users/**"
     - group: "产品服务"

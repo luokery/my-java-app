@@ -4,17 +4,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.converter.UserConverter;
+import com.example.demo.cosnst.BusinessEnum;
 import com.example.demo.cosnst.UserEnum;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.UserException;
@@ -26,20 +36,33 @@ import com.example.demo.model.entity.User;
 import com.example.demo.service.api.UserService;
 
 @Service
+@CacheConfig(cacheManager = "simpleCacheManager")
 public class UserServiceImpl implements UserService<UserDTO, UserDTO> {
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 	
 	private UserMapper userMapper;
 	
+	private RedissonClient redissonClient;
+	
+	private StringRedisTemplate stringRedisTemplate;
+	
+	private RedisTemplate<Object, Object> redisTemplate;
+	
 	private SqlSessionFactory sqlSessionFactory;
 	
-	public UserServiceImpl(UserMapper userMapper, SqlSessionFactory sqlSessionFactory) {
+	public UserServiceImpl(UserMapper userMapper, RedissonClient redissonClient,
+			StringRedisTemplate stringRedisTemplate, RedisTemplate<Object, Object> redisTemplate,
+			SqlSessionFactory sqlSessionFactory) {
 		super();
 		this.userMapper = userMapper;
+		this.redissonClient = redissonClient;
+		this.stringRedisTemplate = stringRedisTemplate;
+		this.redisTemplate = redisTemplate;
 		this.sqlSessionFactory = sqlSessionFactory;
 	}
 
+	@CachePut(value = "userCache", key = "'cache_user_no_' + #DTO.userNo")
 	@Override
 	public UserDTO save(UserDTO DTO) {
 		
@@ -47,35 +70,54 @@ public class UserServiceImpl implements UserService<UserDTO, UserDTO> {
 			throw new UserException(UserEnum.PARAM_DATA_NOT_NULL);
 		}
 		
-        User existing = userMapper.findByNo(DTO.getUserNo());
-        if (existing != null) {
-            throw new BusinessException(UserEnum.USER_already_exists);
+		RLock lock = redissonClient.getLock(DTO.getUserName());
+		
+		User entityPO = null;
+        try {
+        	
+            // 尝试加锁，最多等待20秒，上锁后9秒自动解锁
+            boolean isLocked = lock.tryLock(200, 90, TimeUnit.SECONDS);
+            
+            if (!isLocked) {
+            	throw new BusinessException(BusinessEnum.Lock_gain_failure);
+            }
+    		
+            User existing = userMapper.findByNo(DTO.getUserNo());
+            if (existing != null) {
+                throw new BusinessException(UserEnum.USER_already_exists);
+            }
+            
+    		// 拷贝数据
+    		entityPO = UserConverter.INSTANCE.toEntity(DTO);
+
+    		// 修改公共字段
+    		Date curDate = new Date();
+    		// FIXME 用户编号生成未完成
+    		entityPO.setUserNo(StringUtils.substring(UUID.randomUUID().toString().replaceAll("-", ""), 0, 15));
+    		// FIXME 用户密码生成未完成
+    		entityPO.setUserPassword(StringUtils.substring(UUID.randomUUID().toString().replaceAll("-", ""), 0, 15));
+    		// FIXME 盐生 成未完成
+    		entityPO.setSalt(StringUtils.substring(UUID.randomUUID().toString().replaceAll("-", ""), 0, 8));
+
+    		entityPO.setRecStatus("0001");
+    		entityPO.setCrtTime(curDate);
+    		entityPO.setCrtUser("crtUser");// FIXME 创建用户 成未完成
+    		entityPO.setLstUpdTime(curDate);
+    		entityPO.setLstUpdUser("lstUpdUser");// FIXME 最后更新用户 成未完成
+    		
+    		userMapper.insert(entityPO);
+            
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            // 释放锁
+            lock.unlock();
         }
-        
-		// 拷贝数据
-		User entityPO = UserConverter.INSTANCE.toEntity(DTO);
-
-		// 修改公共字段
-		Date curDate = new Date();
-		// FIXME 用户编号生成未完成
-		entityPO.setUserNo(StringUtils.substring(UUID.randomUUID().toString().replaceAll("-", ""), 0, 15));
-		// FIXME 用户密码生成未完成
-		entityPO.setUserPassword(StringUtils.substring(UUID.randomUUID().toString().replaceAll("-", ""), 0, 15));
-		// FIXME 盐生 成未完成
-		entityPO.setSalt(StringUtils.substring(UUID.randomUUID().toString().replaceAll("-", ""), 0, 8));
-
-		
-		entityPO.setRecStatus("0001");
-		entityPO.setCrtTime(curDate);
-		entityPO.setCrtUser("crtUser");// FIXME 创建用户 成未完成
-		entityPO.setLstUpdTime(curDate);
-		entityPO.setLstUpdUser("lstUpdUser");// FIXME 最后更新用户 成未完成
-		
-		userMapper.insert(entityPO);
 		
 		return UserConverter.INSTANCE.entityToDTO(entityPO);
 	}
 
+	@CacheEvict(value = "userCache", key = "'cache_user_id_' + #DTO.userNo")
 	@Override
 	public UserDTO delete(UserDTO DTO) {
 
@@ -101,7 +143,7 @@ public class UserServiceImpl implements UserService<UserDTO, UserDTO> {
 		
 		return UserConverter.INSTANCE.entityToDTO(entityPO);
 	}
-
+	
 	@Override
 	@Transactional
 	public int deleteBatch(String[] ids) {
@@ -141,7 +183,8 @@ public class UserServiceImpl implements UserService<UserDTO, UserDTO> {
 		}
 		return resultNum;
 	}
-
+	
+	@CachePut(value = "userCache", key = "'cache_user_id_' + #DTO.userNo")
 	@Override
 	public UserDTO updateAllField(UserDTO DTO) {
 		
@@ -165,7 +208,8 @@ public class UserServiceImpl implements UserService<UserDTO, UserDTO> {
 		
 		return UserConverter.INSTANCE.entityToDTO(entityPO);
 	}
-
+	
+	@CachePut(value = "userCache", key = "'cache_user_id_' + #DTO.userNo")
 	@Override
 	public UserDTO updateNotNull(UserDTO DTO) {
 		
@@ -190,6 +234,7 @@ public class UserServiceImpl implements UserService<UserDTO, UserDTO> {
 		return UserConverter.INSTANCE.entityToDTO(entityPO);
 	}
 	
+	@Cacheable(key = "'mtr_' + #DTO.userNo", value = "userCache")
 	@Override
 	public UserDTO query(UserDTO DTO) {
 
@@ -203,7 +248,8 @@ public class UserServiceImpl implements UserService<UserDTO, UserDTO> {
         }
 		return UserConverter.INSTANCE.entityToDTO(entityDb);
 	}
-
+	
+	@Cacheable(key = "'mtr_' + #DTO.toString", value = "userCache")
 	@Override
 	public List<UserDTO> queryList(UserDTO DTO) {
 

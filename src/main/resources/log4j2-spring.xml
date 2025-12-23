@@ -29,7 +29,7 @@
             <Policies>
 				<CronTriggeringPolicy schedule="0 0 0 * * ? *" />
 	            <!-- Policies子节点，基于指定文件大小的滚动策略，size属性用来定义每个日志文件的大小 -->
-	            <SizeBasedTriggeringPolicy size="10KB"/>
+	            <SizeBasedTriggeringPolicy size="1500KB"/>
             </Policies>
             <DefaultRolloverStrategy max="30">
                 <Delete basePath="${LOG_PATH}/archive" maxDepth="2" testMode="false">

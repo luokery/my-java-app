@@ -11,10 +11,10 @@ import org.springframework.web.util.pattern.PathPatternParser;
  * 跨域配置
  * @author 
  */
-//@Configuration
+@Configuration
 public class CorsConfig {
 	
-//    @Bean
+    @Bean
     public CorsWebFilter corsFilter() {
     	
         CorsConfiguration config = new CorsConfiguration();

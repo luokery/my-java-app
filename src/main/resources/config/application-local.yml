@@ -7,6 +7,7 @@ spring:
     import:
       - application-local-datasource.yml
       - application-local-springdoc.yml
+      - application-local-data.yml
 server:
   port: ${PORT:8080}
   

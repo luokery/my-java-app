@@ -13,9 +13,11 @@ public enum BusinessEnum implements ResultFace {
     ERROR(ResultEnum.ERROR.getCode(), ResultEnum.ERROR.getMsg()),
     PARAM_c_ERROR(5, "参数转换失败"),
     PARAM_v_ERROR(6, "参数验证失败"),
-    DATA_COPY_ERROR(7, "拷贝数据失败")
-    , NOT_FONUT_FILE(8, "没有找到文件")
-    , FILE_TYPE_ERROR(8, "文件格式错误")
+    DATA_COPY_ERROR(7, "拷贝数据失败"),
+    NOT_FONUT_FILE(8, "没有找到文件"),
+    FILE_TYPE_ERROR(8, "文件格式错误"),
+    
+    Lock_gain_failure(8, "可能有多个人同时处理, 请检查数据后重试!")
     ;
 
     private Integer code;
