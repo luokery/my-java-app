@@ -22,7 +22,7 @@ public class HttpMessageNotReadableExceptionHandler implements ExceptionHandlerP
 	}
 
 	@Override
-	public ResponseVO handler(HttpMessageNotReadableException exception) {
+	public ResponseVO<?> handler(HttpMessageNotReadableException exception) {
 		return Result.build(ResultEnum.SPRING_MASSAGE_ERROR, null);
 	}
 }

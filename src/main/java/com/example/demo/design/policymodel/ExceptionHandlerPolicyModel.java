@@ -15,4 +15,5 @@ public interface ExceptionHandlerPolicyModel<T> extends PolicyModel<T> {
 	 * @return
 	 */
 	ResponseVO<?> handler(T exception);
+
 }

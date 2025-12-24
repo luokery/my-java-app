@@ -2,10 +2,6 @@ package com.example.demo.model.entity;
 
 import java.util.Objects;
 
-import org.apache.ibatis.annotations.Mapper;
-
-
-
 /**
  * 用户表
  * 

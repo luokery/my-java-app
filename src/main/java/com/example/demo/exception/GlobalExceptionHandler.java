@@ -1,26 +1,19 @@
 package com.example.demo.exception;
 
 import com.example.demo.cosnst.BusinessEnum;
-import com.example.demo.cosnst.ResultEnum;
 import com.example.demo.design.policymodel.ExceptionHandlerPolicyModel;
 import com.example.demo.model.vo.ResponseVO;
 import com.example.demo.model.vo.Result;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Global exception handler using a strategy pattern with ErrorCode and BusinessException.
  */
+@SuppressWarnings("rawtypes")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -45,7 +38,8 @@ public class GlobalExceptionHandler {
      * @param ex The BusinessException that was thrown.
      * @return A ResponseEntity containing the standardized error response.
      */
-    @ExceptionHandler(BusinessException.class)
+    @SuppressWarnings("unchecked")
+	@ExceptionHandler(BusinessException.class)
     public ResponseVO<?> handleBusinessException(BusinessException ex) {
     	
     	ExceptionHandlerPolicyModel exceptionHandler = exceptionResolver.getHandler(ex.getClass());
@@ -77,17 +71,18 @@ public class GlobalExceptionHandler {
 //        throw new BusinessException(ResultEnum.VALIDATION_ERROR, errors);
 //    }
 
-    /**
+	/**
      * A fallback handler for all other exceptions.
      *
      * @param ex The unexpected exception.
      * @return A generic internal server error response.
      */
+    @SuppressWarnings("unchecked")
     @ExceptionHandler(Exception.class)
     public ResponseVO<?> handleAllOtherExceptions(Exception ex) {
         // In a real application, you would log the exception ex here
         
-    	ExceptionHandlerPolicyModel exceptionHandler = exceptionResolver.getHandler(ex.getClass());
+		ExceptionHandlerPolicyModel exceptionHandler = exceptionResolver.getHandler(ex.getClass());
     	
     	if(null != exceptionHandler) {
     		

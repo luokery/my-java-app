@@ -7,14 +7,10 @@ import com.example.demo.mapper.ProductMapper;
 import com.example.demo.model.dto.ProductDTO;
 import com.example.demo.model.entity.Product;
 import com.example.demo.service.api.ProductService;
-import com.example.demo.validation.Groups;
 
-import jakarta.validation.GroupSequence;
-import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.stream.Collectors;

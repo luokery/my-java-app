@@ -20,7 +20,7 @@ public class UserExceptionHandler implements ExceptionHandlerPolicyModel<UserExc
 	}
 
 	@Override
-	public ResponseVO handler(UserException exception) {
+	public ResponseVO<?> handler(UserException exception) {
 		return Result.build(exception.getCode(), exception.getMessage(), null);
 	}
 }

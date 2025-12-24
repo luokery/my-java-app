@@ -1,13 +1,13 @@
 package com.example.demo.model.vo;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 /**
  * 错误响应:
  * @author 
  */
-//@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ErrorVO {
 	
 	/**

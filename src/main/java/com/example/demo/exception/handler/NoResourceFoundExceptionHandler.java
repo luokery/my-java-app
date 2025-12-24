@@ -22,7 +22,7 @@ public class NoResourceFoundExceptionHandler implements ExceptionHandlerPolicyMo
 	}
 
 	@Override
-	public ResponseVO handler(NoResourceFoundException exception) {
+	public ResponseVO<?> handler(NoResourceFoundException exception) {
 		return Result.build(ResultEnum.SPRING_RESOURCE_NOT_FOUND, null);
 	}
 }

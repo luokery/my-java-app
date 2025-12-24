@@ -31,7 +31,8 @@ public class ExceptionResolver implements InitializingBean, ApplicationContextAw
         this.applicationContext = applicationContext;
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public void afterPropertiesSet() {
     	
     	// 1. 获取容器中实现: 异常处理实现

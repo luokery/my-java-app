@@ -29,7 +29,7 @@ public class BindExceptionHandler implements ExceptionHandlerPolicyModel<BindExc
 	}
 
 	@Override
-	public ResponseVO handler(BindException exception) {
+	public ResponseVO<?> handler(BindException exception) {
 		
 		List<FieldError> errors = exception.getBindingResult().getFieldErrors();
 		List<ErrorVO> resultErrors = new ArrayList<ErrorVO>(errors.size());

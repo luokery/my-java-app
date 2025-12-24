@@ -1,6 +1,6 @@
 package com.example.demo.model.vo;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 /**
@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
  * KebabCase策略，Java对象属性：personId，序列化后属性：person-id
  * @author 
  */
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public abstract class BaseVO {
 
 }
